@@ -18,7 +18,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> create(@RequestBody Payment payment) {
+    public <ResponseEntity> ResponseEntity<Payment> create(@RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.createPayment(payment));
     }
 
