@@ -17,37 +17,29 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    // Create
     @PostMapping
     public ResponseEntity<Payment> create(@RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.createPayment(payment));
     }
 
-    // Read All
     @GetMapping
     public ResponseEntity<List<Payment>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
-    // Read By Id
     @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable String id) {
+    public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
-    // Update
     @PutMapping("/{id}")
-    public ResponseEntity<Payment> updatePayment(
-            @PathVariable String id,
-            @RequestBody Payment payment) {
-
+    public ResponseEntity<Payment> updatePayment(@PathVariable Long id,
+                                                 @RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.updatePayment(id, payment));
     }
 
-    // Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePayment(@PathVariable String id) {
-
+    public ResponseEntity<String> deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);
         return ResponseEntity.ok("Payment deleted successfully.");
     }

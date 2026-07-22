@@ -27,16 +27,16 @@ public class PaymentService {
     }
 
     // Read By Id
-    public Payment getPaymentById(String id) {
-        return paymentRepository.findById(id)
+    public Payment getPaymentById(Long id) {
+        return paymentRepository.findById(Long.valueOf(id))
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Payment not found with id : " + id));
     }
 
     // Update
-    public Payment updatePayment(String id, Payment payment) {
+    public Payment updatePayment(Long id, Payment payment) {
 
-        Payment existingPayment = paymentRepository.findById(id)
+        Payment existingPayment = paymentRepository.findById(Long.valueOf(id))
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Payment not found with id : " + id));
 
@@ -49,9 +49,9 @@ public class PaymentService {
     }
 
     // Delete
-    public void deletePayment(String id) {
+    public void deletePayment(Long id) {
 
-        Payment payment = paymentRepository.findById(id)
+        Payment payment = paymentRepository.findById(Long.valueOf(id))
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Payment not found with id : " + id));
 

@@ -21,43 +21,28 @@ private Integer paymentDate;
 private String paymentMethod;
 private String property;
 
-    public Long getId() {
-        return id;
-    }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getAmount() {
-        return amount;
     }
 
     public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
-    public Integer getPaymentDate() {
-        return paymentDate;
-    }
-
     public void setPaymentDate(Integer paymentDate) {
         this.paymentDate = paymentDate;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
     }
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getProperty() {
-        return property;
-    }
-
     public void setProperty(String property) {
         this.property = property;
+    }
+    public enum paymentMethod {
+        ONLINE,
+        CASH,
+        PRE_HALF
     }
 }
