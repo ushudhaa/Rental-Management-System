@@ -1,61 +1,35 @@
-package com.example.RentalManagementSystem.service;
+package com.example.RentalManagementSystem.dto;
 
-import com.example.RentalManagementSystem.entity.Property;
-import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
-import com.example.RentalManagementSystem.repository.PropertyRepository;
-import org.springframework.stereotype.Service;
+import com.example.RentalManagementSystem.enums.PropertyStatus;
+import com.example.RentalManagementSystem.enums.PropertyType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-@Service
-public class PropertyService {
-
-    private final PropertyRepository propertyRepository;
-
-    public PropertyService(PropertyRepository propertyRepository) {
-        this.propertyRepository = propertyRepository;
-    }
-
-    // Create
-    public Property createProperty(Property property) {
-        return propertyRepository.save(property);
-    }
-
-    // Read All
-    public List<Property> getAllProperties() {
-        return propertyRepository.findAll();
-    }
-
-    // Read By Id
-    public Property getPropertyById(Long id) {
-        return propertyRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Property not found with id: " + id));
-    }
-
-    // Update
-    public Property updateProperty(Long id, Property property) {
-
-        Property existingProperty = propertyRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Property not found with id: " + id));
-
-        existingProperty.setPropertyName(property.getPropertyName());
-        existingProperty.setAddress(property.getAddress());
-        existingProperty.setRentAmount(property.getRentAmount());
-        existingProperty.setOwnerName(property.getOwnerName());
-        existingProperty.setStatus(property.getStatus());
-
-        return propertyRepository.save(existingProperty);
-    }
-
-    // Delete
-    public void deleteProperty(Long id) {
-
-        Property property = propertyRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Property not found with id: " + id));
-
-        propertyRepository.delete(property);
-    }
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PropertyResponse {
+    private Long id;
+    private String title;
+    private String description;
+    private String address;
+    private String city;
+    private String state;
+    private String zipCode;
+    private PropertyType type;
+    private BigDecimal rentAmount;
+    private Integer bedrooms;
+    private Integer bathrooms;
+    private Double areaSqft;
+    private PropertyStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
