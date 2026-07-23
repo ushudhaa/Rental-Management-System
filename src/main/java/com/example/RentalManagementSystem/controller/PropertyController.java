@@ -1,51 +1,57 @@
 package com.example.RentalManagementSystem.controller;
 
-import com.example.RentalManagementSystem.entity.Property;
+import com.example.RentalManagementSystem.dto.PropertyRequest;
+import com.example.RentalManagementSystem.dto.PropertyResponse;
+import com.example.RentalManagementSystem.enums.PropertyStatus;
 import com.example.RentalManagementSystem.service.PropertyService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/properties")
+@RequestMapping("/api/v1/properties")
+@RequiredArgsConstructor
 public class PropertyController {
 
     private final PropertyService propertyService;
 
-    public PropertyController(PropertyService propertyService) {
-        this.propertyService = propertyService;
-    }
-
-    // Create
     @PostMapping
-    public ResponseEntity<Property> create(@RequestBody Property property) {
-        return ResponseEntity.ok(propertyService.createProperty(property));
+    public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(propertyService.create(request));
     }
 
-    // Read All
-    @GetMapping
-    public ResponseEntity<List<Property>> getAllProperties() {
-        return ResponseEntity.ok(propertyService.getAllProperties());
-    }
-
-    // Read By Id
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getPropertyById(@PathVariable Long id) {
-        return ResponseEntity.ok(propertyService.getPropertyById(id));
+    public ResponseEntity<PropertyResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(propertyService.getById(id));
     }
 
-    // Update
+    @GetMapping
+    public ResponseEntity<Page<PropertyResponse>> getAll(
+            @RequestParam(required = false) PropertyStatus status,
+            @RequestParam(required = false) String city,
+            Pageable pageable) {
+
+        if (status != null) {
+            return ResponseEntity.ok(propertyService.getByStatus(status, pageable));
+        }
+        if (city != null && !city.isBlank()) {
+            return ResponseEntity.ok(propertyService.searchByCity(city, pageable));
+        }
+        return ResponseEntity.ok(propertyService.getAll(pageable));
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Property> updateProperty(@PathVariable Long id,
-                                                   @RequestBody Property property) {
-        return ResponseEntity.ok(propertyService.updateProperty(id, property));
+    public ResponseEntity<PropertyResponse> update(@PathVariable Long id, @Valid @RequestBody PropertyRequest request) {
+        return ResponseEntity.ok(propertyService.update(id, request));
     }
 
-    // Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProperty(@PathVariable Long id) {
-        propertyService.deleteProperty(id);
-        return ResponseEntity.ok("Property deleted successfully.");
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        propertyService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
