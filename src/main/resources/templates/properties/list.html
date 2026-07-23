@@ -1,10 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Properties')}"></head>
 <body>
+<div th:replace="~{layout :: nav}"></div>
 
+<main class="container">
+    <div class="page-header">
+        <h1>Properties</h1>
+        <a href="/properties/new" class="btn btn-primary">+ Add Property</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Title</th><th>City</th><th>Type</th><th>Rent</th><th>Status</th><th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${propertyPage.content}">
+            <td th:text="${p.title}"></td>
+            <td th:text="${p.city}"></td>
+            <td th:text="${p.type}"></td>
+            <td th:text="${p.rentAmount}"></td>
+            <td><span class="badge" th:text="${p.status}"></span></td>
+            <td class="actions">
+                <a th:href="@{/properties/edit/{id}(id=${p.id})}" class="btn btn-sm">Edit</a>
+                <form th:action="@{/properties/{id}/delete(id=${p.id})}" method="post" style="display:inline"
+                      onsubmit="return confirm('Delete this property?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${propertyPage.totalPages > 1}">
+        <a th:each="i : ${#numbers.sequence(0, propertyPage.totalPages - 1)}"
+           th:href="@{/properties(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == propertyPage.number} ? 'active' : ''"></a>
+    </div>
+</main>
 </body>
 </html>

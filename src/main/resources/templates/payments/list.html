@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Payments')}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Payments</h1>
+        <a href="/payments/new" class="btn btn-primary">+ Add Payment</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Property</th><th>Tenant</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pay : ${paymentPage.content}">
+            <td th:text="${pay.propertyTitle}"></td>
+            <td th:text="${pay.tenantName}"></td>
+            <td th:text="${pay.amount}"></td>
+            <td th:text="${pay.dueDate}"></td>
+            <td><span class="badge" th:text="${pay.status}"></span></td>
+            <td class="actions">
+                <a th:href="@{/payments/edit/{id}(id=${pay.id})}" class="btn btn-sm">Edit</a>
+                <form th:action="@{/payments/{id}/mark-paid(id=${pay.id})}" method="post" style="display:inline">
+                    <button type="submit" class="btn btn-sm btn-success">Mark Paid</button>
+                </form>
+                <form th:action="@{/payments/{id}/delete(id=${pay.id})}" method="post" style="display:inline"
+                      onsubmit="return confirm('Delete this payment?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${paymentPage.totalPages > 1}">
+        <a th:each="i : ${#numbers.sequence(0, paymentPage.totalPages - 1)}"
+           th:href="@{/payments(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == paymentPage.number} ? 'active' : ''"></a>
+    </div>
+</main>
+</body>
+</html>

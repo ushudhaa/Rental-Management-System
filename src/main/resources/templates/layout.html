@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${title} + ' | Rental Management System'">RMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-
+<nav th:fragment="nav" class="navbar">
+    <a href="/" class="brand">RMS</a>
+    <div class="nav-links">
+        <a href="/properties">Properties</a>
+        <a href="/payments">Payments</a>
+        <a href="/swagger-ui.html" target="_blank">API Docs</a>
+    </div>
+</nav>
 </body>
 </html>
