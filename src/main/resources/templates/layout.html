@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title} + ' | Rental Management System'">RMS</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -14,5 +15,8 @@
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
     </div>
 </nav>
+<footer th:fragment="footer" class="site-footer">
+    Rental Management System &middot; Built with Spring Boot
+</footer>
 </body>
 </html>
