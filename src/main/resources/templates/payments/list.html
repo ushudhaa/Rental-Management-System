@@ -6,11 +6,18 @@
 
 <main class="container">
     <div class="page-header">
-        <h1>Payments</h1>
+        <div>
+            <h1>Payments</h1>
+            <div class="subtitle" th:text="${paymentPage.totalElements} + ' total payments'"></div>
+        </div>
         <a href="/payments/new" class="btn btn-primary">+ Add Payment</a>
     </div>
 
-    <table class="data-table">
+    <div th:if="${paymentPage.content.isEmpty()}" class="empty-state">
+        <p>No payments recorded yet.</p>
+    </div>
+
+    <table class="data-table" th:unless="${paymentPage.content.isEmpty()}">
         <thead>
         <tr>
             <th>Property</th><th>Tenant</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th>
@@ -22,9 +29,13 @@
             <td th:text="${pay.tenantName}"></td>
             <td th:text="${pay.amount}"></td>
             <td th:text="${pay.dueDate}"></td>
-            <td><span class="badge" th:text="${pay.status}"></span></td>
+            <td>
+                <span class="badge"
+                      th:classappend="'badge-' + ${#strings.toLowerCase(pay.status)}"
+                      th:text="${pay.status}"></span>
+            </td>
             <td class="actions">
-                <a th:href="@{/payments/edit/{id}(id=${pay.id})}" class="btn btn-sm">Edit</a>
+                <a th:href="@{/payments/edit/{id}(id=${pay.id})}" class="btn btn-sm btn-secondary">Edit</a>
                 <form th:action="@{/payments/{id}/mark-paid(id=${pay.id})}" method="post" style="display:inline">
                     <button type="submit" class="btn btn-sm btn-success">Mark Paid</button>
                 </form>
@@ -43,6 +54,8 @@
            th:text="${i + 1}"
            th:classappend="${i == paymentPage.number} ? 'active' : ''"></a>
     </div>
+
+    <div th:replace="~{layout :: footer}"></div>
 </main>
 </body>
 </html>
