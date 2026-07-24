@@ -15,8 +15,13 @@
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
     </div>
 </nav>
+
+<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
+    <span class="arrow">&larr;</span> Back
+</button>
+
 <footer th:fragment="footer" class="site-footer">
-    Rental Management System &middot; Built with Spring Boot
+    Rental Management System &middot; Built with Spring Boot by Ushudha Sanwa Limbu
 </footer>
 </body>
 </html>
