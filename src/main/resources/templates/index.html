@@ -4,15 +4,36 @@
 <body>
 <div th:replace="~{layout :: nav}"></div>
 
-<main class="container">
+<main>
     <div class="hero">
+        <span class="eyebrow">Property &amp; Rent Management</span>
         <h1>Rental Management System</h1>
-        <p>Manage properties and rent payments in one place.</p>
+        <p>Track properties, manage tenants' rent, and stay on top of your portfolio — all in one clean dashboard.</p>
         <div class="hero-actions">
             <a href="/properties" class="btn btn-primary">View Properties</a>
             <a href="/payments" class="btn btn-secondary">View Payments</a>
         </div>
     </div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="icon">P</div>
+            <h3>Property Catalog</h3>
+            <p>Add, edit and organize every property with status, type, rent and details in one place.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">$</div>
+            <h3>Payment Tracking</h3>
+            <p>Log rent payments, mark them paid, and catch overdue accounts before they slip through.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">API</div>
+            <h3>Developer-Ready API</h3>
+            <p>A fully documented REST API sits underneath — ready for a mobile app or integration.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: footer}"></div>
 </main>
 </body>
 </html>
