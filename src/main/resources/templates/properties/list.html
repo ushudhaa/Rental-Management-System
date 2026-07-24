@@ -6,11 +6,18 @@
 
 <main class="container">
     <div class="page-header">
-        <h1>Properties</h1>
+        <div>
+            <h1>Properties</h1>
+            <div class="subtitle" th:text="${propertyPage.totalElements} + ' total properties'"></div>
+        </div>
         <a href="/properties/new" class="btn btn-primary">+ Add Property</a>
     </div>
 
-    <table class="data-table">
+    <div th:if="${propertyPage.content.isEmpty()}" class="empty-state">
+        <p>No properties yet. Add your first one to get started.</p>
+    </div>
+
+    <table class="data-table" th:unless="${propertyPage.content.isEmpty()}">
         <thead>
         <tr>
             <th>Title</th><th>City</th><th>Type</th><th>Rent</th><th>Status</th><th>Actions</th>
@@ -22,9 +29,13 @@
             <td th:text="${p.city}"></td>
             <td th:text="${p.type}"></td>
             <td th:text="${p.rentAmount}"></td>
-            <td><span class="badge" th:text="${p.status}"></span></td>
+            <td>
+                <span class="badge"
+                      th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}"
+                      th:text="${p.status}"></span>
+            </td>
             <td class="actions">
-                <a th:href="@{/properties/edit/{id}(id=${p.id})}" class="btn btn-sm">Edit</a>
+                <a th:href="@{/properties/edit/{id}(id=${p.id})}" class="btn btn-sm btn-secondary">Edit</a>
                 <form th:action="@{/properties/{id}/delete(id=${p.id})}" method="post" style="display:inline"
                       onsubmit="return confirm('Delete this property?');">
                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -40,6 +51,8 @@
            th:text="${i + 1}"
            th:classappend="${i == propertyPage.number} ? 'active' : ''"></a>
     </div>
+
+    <div th:replace="~{layout :: footer}"></div>
 </main>
 </body>
 </html>
