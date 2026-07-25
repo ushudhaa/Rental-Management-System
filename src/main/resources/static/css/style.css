@@ -334,3 +334,21 @@ body {
     .data-table { display: block; overflow-x: auto; white-space: nowrap; }
     .form-row { flex-direction: column; }
 }
+/* ===== Back button ===== */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--grey-500);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 0;
+    margin-bottom: 18px;
+    transition: color 0.15s ease;
+}
+.btn-back:hover { color: var(--olive-600); }
+.btn-back .arrow { font-size: 1rem; transition: transform 0.15s ease; }
+.btn-back:hover .arrow { transform: translateX(-3px); }
