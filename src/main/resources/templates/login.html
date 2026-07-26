@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Login')}"></head>
+<body>
+<main class="auth-wrapper">
+  <div class="auth-card">
+    <h1>RMS</h1>
+    <p class="subtitle">Sign in to manage your properties</p>
+
+    <div th:if="${param.error}" class="alert alert-error">
+      Invalid email or password.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+      You've been logged out.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+      <label>Email</label>
+      <input type="email" name="username" required autofocus>
+
+      <label>Password</label>
+      <input type="password" name="password" required>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">Sign In</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>
