@@ -1,4 +1,6 @@
 package com.example.RentalManagementSystem.enums;
 
-public class Role {
+public enum Role {
+    ADMIN,
+    LANDLORD
 }
