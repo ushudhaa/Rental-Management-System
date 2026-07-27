@@ -15,6 +15,18 @@
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
     </div>
 </nav>
+<nav th:fragment="nav" class="navbar">
+    <a href="/" class="brand">RMS</a>
+    <div class="nav-links">
+        <a href="/properties">Properties</a>
+        <a href="/payments">Payments</a>
+        <a href="/admin/users">Users</a>
+        <a href="/swagger-ui.html" target="_blank">API Docs</a>
+        <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
+            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+        </form>
+    </div>
+</nav>
 
 <button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
     <span class="arrow">&larr;</span> Back
