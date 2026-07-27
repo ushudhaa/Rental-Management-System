@@ -5,6 +5,7 @@ import com.example.RentalManagementSystem.dto.LoginRequest;
 import com.example.RentalManagementSystem.dto.RegisterRequest;
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.Role;
+import com.example.RentalManagementSystem.exception.BadRequestException;
 import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
 import com.example.RentalManagementSystem.repository.UserRepository;
 import com.example.RentalManagementSystem.security.JwtService;
@@ -15,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -23,31 +27,43 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalStateException("A user with this email already exists");
         }
+
+        String token = UUID.randomUUID().toString();
 
         User user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole() != null ? request.getRole() : Role.LANDLORD)
+                .emailVerified(false)
+                .verificationToken(token)
+                .verificationTokenExpiry(LocalDateTime.now().plusHours(24))
                 .build();
 
-        User saved = userRepository.save(user);
-        String token = jwtService.generateToken(toUserDetails(saved));
+        userRepository.save(user);
+        emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), token);
+    }
 
-        return AuthResponse.builder()
-                .token(token)
-                .tokenType("Bearer")
-                .userId(saved.getId())
-                .fullName(saved.getFullName())
-                .email(saved.getEmail())
-                .role(saved.getRole().name())
-                .build();
+    @Transactional
+    public void verifyEmail(String token) {
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new BadRequestException("Invalid or expired verification link"));
+
+        if (user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Verification link has expired. Please register again.");
+        }
+
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
     }
 
     public AuthResponse login(LoginRequest request) {
