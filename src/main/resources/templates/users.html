@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Registered Users')}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div th:replace="~{layout :: backButton}"></div>
+    <div class="page-header">
+        <div>
+            <h1>Registered Users</h1>
+            <div class="subtitle" th:text="${users.size()} + ' total accounts'"></div>
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Registered</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.role}"></td>
+            <td>
+                <span class="badge" th:classappend="${u.emailVerified} ? 'badge-paid' : 'badge-pending'"
+                      th:text="${u.emailVerified} ? 'Verified' : 'Pending'"></span>
+            </td>
+            <td th:text="${u.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:replace="~{layout :: footer}"></div>
+</main>
+</body>
+</html>
