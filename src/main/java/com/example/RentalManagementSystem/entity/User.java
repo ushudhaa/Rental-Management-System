@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Getter
@@ -40,4 +42,15 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private Role role = Role.LANDLORD;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    private String verificationToken;
+
+    private LocalDateTime verificationTokenExpiry;
+
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
