@@ -71,6 +71,10 @@ public class Property {
     @Builder.Default
     private PropertyStatus status = PropertyStatus.AVAILABLE;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
