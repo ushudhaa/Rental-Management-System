@@ -383,3 +383,9 @@ body {
 .auth-footer { text-align: center; margin-top: 20px; font-size: 0.88rem; color: var(--grey-500); }
 .auth-footer a { color: var(--olive-600); font-weight: 600; text-decoration: none; }
 .auth-footer a:hover { text-decoration: underline; }
+.auth-tabs { display: flex; gap: 4px; background: var(--grey-100); border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+.auth-tab {
+    flex: 1; padding: 9px 0; border: none; background: transparent; border-radius: 6px;
+    font-weight: 600; font-size: 0.85rem; color: var(--grey-500); cursor: pointer;
+}
+.auth-tab.active { background: #fff; color: var(--grey-900); box-shadow: var(--shadow-sm); }
