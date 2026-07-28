@@ -1,39 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('Home')}"></head>
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' | Rental Management System'">RMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
 <body>
-<div th:replace="~{layout :: nav}"></div>
-
-<main>
-    <div class="hero">
-        <span class="eyebrow">Property &amp; Rent Management</span>
-        <h1>Rental Management System</h1>
-        <p>Track properties, manage tenants' rent, and stay on top of your portfolio — all in one clean dashboard.</p>
-        <div class="hero-actions">
-            <a href="/properties" class="btn btn-primary">View Properties</a>
-            <a href="/payments" class="btn btn-secondary">View Payments</a>
-        </div>
+<nav th:fragment="nav" class="navbar">
+    <a href="/" class="brand">RMS</a>
+    <div class="nav-links">
+        <a href="/properties">Properties</a>
+        <a href="/payments">Payments</a>
+        <a href="/admin/users">Users</a>
+        <a href="/swagger-ui.html" target="_blank">API Docs</a>
+        <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
+            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+        </form>
     </div>
+</nav>
 
-    <div class="feature-grid">
-        <div class="feature-card">
-            <div class="icon">P</div>
-            <h3>Property Catalog</h3>
-            <p>Add, edit and organize every property with status, type, rent and details in one place.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">$</div>
-            <h3>Payment Tracking</h3>
-            <p>Log rent payments, mark them paid, and catch overdue accounts before they slip through.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">API</div>
-            <h3>Developer-Ready API</h3>
-            <p>A fully documented REST API sits underneath — ready for a mobile app or integration.</p>
-        </div>
-    </div>
+<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
+    <span class="arrow">&larr;</span> Back
+</button>
 
-    <div th:replace="~{layout :: footer}"></div>
-</main>
+<footer th:fragment="footer" class="site-footer">
+    Rental Management System &middot; Built with Spring Boot
+</footer>
 </body>
 </html>
