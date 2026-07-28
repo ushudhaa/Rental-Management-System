@@ -1,5 +1,6 @@
 package com.example.RentalManagementSystem.config;
 
+import com.example.RentalManagementSystem.security.CustomAuthenticationSuccessHandler;
 import com.example.RentalManagementSystem.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +27,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
-    // ---- Chain 1: REST API — stateless JWT ----
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +48,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ---- Chain 2: Website — session-based form login ----
     @Bean
     @Order(2)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -59,7 +59,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(successHandler)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
