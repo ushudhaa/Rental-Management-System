@@ -12,14 +12,6 @@
     <div class="nav-links">
         <a href="/properties">Properties</a>
         <a href="/payments">Payments</a>
-        <a href="/swagger-ui.html" target="_blank">API Docs</a>
-    </div>
-</nav>
-<nav th:fragment="nav" class="navbar">
-    <a href="/" class="brand">RMS</a>
-    <div class="nav-links">
-        <a href="/properties">Properties</a>
-        <a href="/payments">Payments</a>
         <a href="/admin/users">Users</a>
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
         <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
@@ -33,7 +25,7 @@
 </button>
 
 <footer th:fragment="footer" class="site-footer">
-    Rental Management System &middot; Built with Spring Boot by Ushudha Sanwa Limbu
+    Rental Management System &middot; Built with Spring Boot
 </footer>
 </body>
 </html>
