@@ -13,6 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -35,8 +39,43 @@ public class AdminViewController {
     }
 
     @GetMapping("/users")
-    public String users(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+    public String users(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "newest") String sort,
+            Model model) {
+
+        List<User> allUsers = userRepository.findAll();
+
+        List<User> filtered = allUsers.stream()
+                .filter(u -> search == null || search.isBlank()
+                        || u.getFullName().toLowerCase().contains(search.toLowerCase())
+                        || u.getEmail().toLowerCase().contains(search.toLowerCase()))
+                .filter(u -> role == null || role.isBlank() || u.getRole().name().equals(role))
+                .filter(u -> status == null || status.isBlank()
+                        || (status.equals("VERIFIED") && u.isEmailVerified())
+                        || (status.equals("PENDING") && !u.isEmailVerified()))
+                .collect(java.util.stream.Collectors.toList());
+
+        switch (sort) {
+            case "oldest" -> filtered.sort(Comparator.comparing(User::getCreatedAt));
+            case "name_asc" -> filtered.sort(Comparator.comparing(User::getFullName, String.CASE_INSENSITIVE_ORDER));
+            case "name_desc" -> filtered.sort(Comparator.comparing(User::getFullName, String.CASE_INSENSITIVE_ORDER).reversed());
+            default -> filtered.sort(Comparator.comparing(User::getCreatedAt).reversed());
+        }
+
+        model.addAttribute("users", filtered);
+        model.addAttribute("totalUsers", allUsers.size());
+        model.addAttribute("totalAdmins", allUsers.stream().filter(u -> u.getRole() == Role.ADMIN).count());
+        model.addAttribute("totalLandlords", allUsers.stream().filter(u -> u.getRole() == Role.LANDLORD).count());
+        model.addAttribute("totalPending", allUsers.stream().filter(u -> !u.isEmailVerified()).count());
+
+        model.addAttribute("search", search);
+        model.addAttribute("role", role);
+        model.addAttribute("status", status);
+        model.addAttribute("sort", sort);
+
         return "admin/users";
     }
 
