@@ -1,8 +1,9 @@
 package com.example.RentalManagementSystem.controller;
 
 import com.example.RentalManagementSystem.entity.User;
+import com.example.RentalManagementSystem.enums.PropertyStatus;
+import com.example.RentalManagementSystem.enums.Role;
 import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
-import com.example.RentalManagementSystem.repository.PaymentRepository;
 import com.example.RentalManagementSystem.repository.PropertyRepository;
 import com.example.RentalManagementSystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,18 @@ public class AdminViewController {
 
     private final UserRepository userRepository;
     private final PropertyRepository propertyRepository;
-    private final PaymentRepository paymentRepository;
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("totalUsers", userRepository.count());
+        model.addAttribute("totalLandlords", userRepository.countByRole(Role.LANDLORD));
+        model.addAttribute("verifiedLandlords", userRepository.countByRoleAndEmailVerifiedTrue(Role.LANDLORD));
+        model.addAttribute("pendingLandlords", userRepository.countByRoleAndEmailVerifiedFalse(Role.LANDLORD));
+        model.addAttribute("totalProperties", propertyRepository.count());
+        model.addAttribute("availableProperties", propertyRepository.countByStatus(PropertyStatus.AVAILABLE));
+        model.addAttribute("recentUsers", userRepository.findTop5ByOrderByCreatedAtDesc());
+        return "admin/dashboard";
+    }
 
     @GetMapping("/users")
     public String users(Model model) {
@@ -34,7 +46,8 @@ public class AdminViewController {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         model.addAttribute("landlord", landlord);
-        model.addAttribute("properties", propertyRepository.findByOwnerEmail(landlord.getEmail(), PageRequest.of(0, 50)).getContent());
+        model.addAttribute("properties",
+                propertyRepository.findByOwnerEmail(landlord.getEmail(), PageRequest.of(0, 50)).getContent());
         return "admin/landlord-detail";
     }
 }
