@@ -398,3 +398,18 @@ body {
 .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--grey-900); }
 .stat-card .stat-title { font-size: 0.82rem; font-weight: 600; color: var(--grey-600); margin-top: 4px; }
 .stat-card .stat-desc { font-size: 0.78rem; color: var(--grey-400); margin-top: 4px; }
+.filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    background: #fff; border: 1px solid var(--grey-200); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 20px;
+}
+.filter-bar input[type="text"] {
+    flex: 1; min-width: 200px; padding: 9px 12px; border: 1px solid var(--grey-300);
+    border-radius: 8px; font-size: 0.88rem;
+}
+.filter-bar select {
+    padding: 9px 12px; border: 1px solid var(--grey-300); border-radius: 8px; font-size: 0.88rem; background: #fff;
+}
+
+.badge-admin { background: #f3e8d9; color: #8a5a1f; }
+.badge-landlord { background: var(--info-bg); color: var(--info); }
