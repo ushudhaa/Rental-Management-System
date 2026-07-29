@@ -10,4 +10,5 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Page<Property> findByStatus(PropertyStatus status, Pageable pageable);
     Page<Property> findByCityIgnoreCaseContaining(String city, Pageable pageable);
     Page<Property> findByOwnerEmail(String email, Pageable pageable);
+    long countByStatus(PropertyStatus status);
 }
