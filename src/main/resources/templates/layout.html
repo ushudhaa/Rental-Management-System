@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +10,13 @@
 <nav th:fragment="nav" class="navbar">
     <a href="/" class="brand">RMS</a>
     <div class="nav-links">
-        <a href="/properties">Properties</a>
-        <a href="/payments">Payments</a>
-        <a href="/admin/users">Users</a>
+        <th:block sec:authorize="hasRole('LANDLORD')">
+            <a href="/properties">Properties</a>
+            <a href="/payments">Payments</a>
+        </th:block>
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <a href="/admin/users">Users</a>
+        </th:block>
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
         <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
             <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
