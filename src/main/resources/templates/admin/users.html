@@ -9,31 +9,82 @@
     <div class="page-header">
         <div>
             <h1>Registered Users</h1>
-            <div class="subtitle" th:text="${users.size()} + ' total accounts'"></div>
+            <div class="subtitle" th:text="${users.size()} + ' of ' + ${totalUsers} + ' accounts shown'"></div>
         </div>
     </div>
 
-    <table class="data-table">
+    <div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:24px;">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalUsers}"></div>
+            <div class="stat-title">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalAdmins}"></div>
+            <div class="stat-title">Admins</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalLandlords}"></div>
+            <div class="stat-title">Landlords</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalPending}"></div>
+            <div class="stat-title">Pending</div>
+        </div>
+    </div>
+
+    <form method="get" th:action="@{/admin/users}" class="filter-bar">
+        <input type="text" name="search" placeholder="Search by name or email..." th:value="${search}">
+
+        <select name="role">
+            <option value="">All Roles</option>
+            <option value="ADMIN" th:selected="${role == 'ADMIN'}">ADMIN</option>
+            <option value="LANDLORD" th:selected="${role == 'LANDLORD'}">LANDLORD</option>
+        </select>
+
+        <select name="status">
+            <option value="">All Statuses</option>
+            <option value="VERIFIED" th:selected="${status == 'VERIFIED'}">VERIFIED</option>
+            <option value="PENDING" th:selected="${status == 'PENDING'}">PENDING</option>
+        </select>
+
+        <select name="sort">
+            <option value="newest" th:selected="${sort == 'newest'}">Newest First</option>
+            <option value="oldest" th:selected="${sort == 'oldest'}">Oldest First</option>
+            <option value="name_asc" th:selected="${sort == 'name_asc'}">Name A-Z</option>
+            <option value="name_desc" th:selected="${sort == 'name_desc'}">Name Z-A</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <a href="/admin/users" class="btn btn-secondary btn-sm">Reset Filters</a>
+    </form>
+
+    <div th:if="${users.isEmpty()}" class="empty-state">
+        <p>No users match your filters.</p>
+    </div>
+
+    <table class="data-table" th:unless="${users.isEmpty()}">
         <thead>
         <tr>
-            <th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Registered</th>
+            <th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Registered</th><th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="u : ${users}">
-            <td>
-                <a th:if="${u.role.name() == 'LANDLORD'}"
-                   th:href="@{/admin/landlords/{id}(id=${u.id})}"
-                   th:text="${u.fullName}"></a>
-                <span th:unless="${u.role.name() == 'LANDLORD'}" th:text="${u.fullName}"></span>
-            </td>
+            <td th:text="${u.fullName}"></td>
             <td th:text="${u.email}"></td>
-            <td th:text="${u.role}"></td>
+            <td>
+                <span class="badge" th:classappend="${u.role.name() == 'ADMIN'} ? 'badge-admin' : 'badge-landlord'"
+                      th:text="${u.role}"></span>
+            </td>
             <td>
                 <span class="badge" th:classappend="${u.emailVerified} ? 'badge-paid' : 'badge-pending'"
                       th:text="${u.emailVerified} ? 'Verified' : 'Pending'"></span>
             </td>
-            <td th:text="${u.createdAt}"></td>
+            <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
+            <td>
+                <a th:if="${u.role.name() == 'LANDLORD'}" th:href="@{/admin/landlords/{id}(id=${u.id})}"
+                   class="btn btn-sm btn-secondary">View</a>
+            </td>
         </tr>
         </tbody>
     </table>
