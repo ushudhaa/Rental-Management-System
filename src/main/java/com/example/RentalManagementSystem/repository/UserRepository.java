@@ -2,6 +2,7 @@ package com.example.RentalManagementSystem.repository;
 
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.Role;
+import com.example.RentalManagementSystem.enums.VerificationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByRole(Role role);
     long countByRoleAndEmailVerifiedTrue(Role role);
     long countByRoleAndEmailVerifiedFalse(Role role);
+    long countByRoleAndVerificationStatus(Role role, VerificationStatus status);
 
     List<User> findTop5ByOrderByCreatedAtDesc();
 }

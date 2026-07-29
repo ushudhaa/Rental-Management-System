@@ -1,6 +1,8 @@
 package com.example.RentalManagementSystem.entity;
 
+import com.example.RentalManagementSystem.enums.AccountStatus;
 import com.example.RentalManagementSystem.enums.Role;
+import com.example.RentalManagementSystem.enums.VerificationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -50,6 +52,18 @@ public class User {
     private String verificationToken;
 
     private LocalDateTime verificationTokenExpiry;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private VerificationStatus verificationStatus = VerificationStatus.PENDING;
+
+    private String rejectionReason;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
