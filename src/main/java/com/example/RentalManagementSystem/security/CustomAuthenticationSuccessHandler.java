@@ -21,7 +21,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(role -> role.equals("ROLE_ADMIN"));
 
-        String redirectUrl = isAdmin ? "/admin/users" : "/";
+        String redirectUrl = isAdmin ? "/admin/dashboard" : "/properties";
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
