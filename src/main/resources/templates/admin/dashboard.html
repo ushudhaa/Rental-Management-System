@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Dashboard')}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div class="page-header">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <div class="subtitle">Overview of your platform</div>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon">U</div>
+            <div class="stat-value" th:text="${totalUsers}"></div>
+            <div class="stat-title">Total Users</div>
+            <div class="stat-desc">All registered accounts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">L</div>
+            <div class="stat-value" th:text="${totalLandlords}"></div>
+            <div class="stat-title">Total Landlords</div>
+            <div class="stat-desc">Users with landlord role</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">V</div>
+            <div class="stat-value" th:text="${verifiedLandlords}"></div>
+            <div class="stat-title">Verified Landlords</div>
+            <div class="stat-desc">Approved and active</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">P</div>
+            <div class="stat-value" th:text="${pendingLandlords}"></div>
+            <div class="stat-title">Pending Verifications</div>
+            <div class="stat-desc">Waiting for approval</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">H</div>
+            <div class="stat-value" th:text="${totalProperties}"></div>
+            <div class="stat-title">Total Properties</div>
+            <div class="stat-desc">Across all landlords</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">A</div>
+            <div class="stat-value" th:text="${availableProperties}"></div>
+            <div class="stat-title">Available Properties</div>
+            <div class="stat-desc">Currently for rent</div>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <h2 style="font-size:1.15rem;">Recent Users</h2>
+        <a href="/admin/users" class="btn btn-sm btn-secondary">View All Users</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Registered</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${recentUsers}">
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.role}"></td>
+            <td>
+                <span class="badge" th:classappend="${u.emailVerified} ? 'badge-paid' : 'badge-pending'"
+                      th:text="${u.emailVerified} ? 'Verified' : 'Pending'"></span>
+            </td>
+            <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
+            <td>
+                <a th:if="${u.role.name() == 'LANDLORD'}" th:href="@{/admin/landlords/{id}(id=${u.id})}"
+                   class="btn btn-sm btn-secondary">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:replace="~{layout :: footer}"></div>
+</main>
+</body>
+</html>
