@@ -21,7 +21,12 @@
         </thead>
         <tbody>
         <tr th:each="u : ${users}">
-            <td th:text="${u.fullName}"></td>
+            <td>
+                <a th:if="${u.role.name() == 'LANDLORD'}"
+                   th:href="@{/admin/landlords/{id}(id=${u.id})}"
+                   th:text="${u.fullName}"></a>
+                <span th:unless="${u.role.name() == 'LANDLORD'}" th:text="${u.fullName}"></span>
+            </td>
             <td th:text="${u.email}"></td>
             <td th:text="${u.role}"></td>
             <td>
