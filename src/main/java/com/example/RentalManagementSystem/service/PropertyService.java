@@ -3,9 +3,11 @@ package com.example.RentalManagementSystem.service;
 import com.example.RentalManagementSystem.dto.PropertyRequest;
 import com.example.RentalManagementSystem.dto.PropertyResponse;
 import com.example.RentalManagementSystem.entity.Property;
+import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.PropertyStatus;
 import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
 import com.example.RentalManagementSystem.repository.PropertyRepository;
+import com.example.RentalManagementSystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public PropertyResponse create(PropertyRequest request) {
+    public PropertyResponse create(PropertyRequest request, String ownerEmail) {
+        User owner = userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + ownerEmail));
+
         Property property = Property.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -33,6 +39,7 @@ public class PropertyService {
                 .bathrooms(request.getBathrooms())
                 .areaSqft(request.getAreaSqft())
                 .status(request.getStatus() != null ? request.getStatus() : PropertyStatus.AVAILABLE)
+                .owner(owner)
                 .build();
 
         return toResponse(propertyRepository.save(property));
@@ -44,6 +51,10 @@ public class PropertyService {
 
     public Page<PropertyResponse> getAll(Pageable pageable) {
         return propertyRepository.findAll(pageable).map(this::toResponse);
+    }
+
+    public Page<PropertyResponse> getByOwner(String ownerEmail, Pageable pageable) {
+        return propertyRepository.findByOwnerEmail(ownerEmail, pageable).map(this::toResponse);
     }
 
     public Page<PropertyResponse> getByStatus(PropertyStatus status, Pageable pageable) {

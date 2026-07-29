@@ -5,6 +5,7 @@ import com.example.RentalManagementSystem.dto.PropertyResponse;
 import com.example.RentalManagementSystem.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class PropertyViewController {
     private final PropertyService propertyService;
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("propertyPage", propertyService.getAll(PageRequest.of(page, 8)));
+    public String list(@RequestParam(defaultValue = "0") int page, Model model, Authentication authentication) {
+        model.addAttribute("propertyPage", propertyService.getByOwner(authentication.getName(), PageRequest.of(page, 8)));
         return "properties/list";
     }
 
@@ -30,8 +31,8 @@ public class PropertyViewController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute PropertyRequest propertyRequest) {
-        propertyService.create(propertyRequest);
+    public String create(@ModelAttribute PropertyRequest propertyRequest, Authentication authentication) {
+        propertyService.create(propertyRequest, authentication.getName());
         return "redirect:/properties";
     }
 
