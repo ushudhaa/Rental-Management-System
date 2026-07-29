@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${user.fullName})}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div th:replace="~{layout :: backButton}"></div>
+
+    <div th:if="${param.verified}" class="alert alert-success">Landlord verified successfully.</div>
+    <div th:if="${param.rejected}" class="alert alert-error">Landlord verification was rejected.</div>
+    <div th:if="${param.disabled}" class="alert alert-error">Account disabled.</div>
+    <div th:if="${param.activated}" class="alert alert-success">Account activated.</div>
+
+    <div class="page-header">
+        <div>
+            <h1 th:text="${user.fullName}"></h1>
+            <div class="subtitle" th:text="${user.email}"></div>
+        </div>
+    </div>
+
+    <div class="form-card" style="max-width:640px;">
+        <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+        <p><strong>Account Status:</strong>
+            <span class="badge" th:classappend="${user.accountStatus.name() == 'ACTIVE'} ? 'badge-paid' : 'badge-failed'"
+                  th:text="${user.accountStatus}"></span>
+        </p>
+        <p><strong>Verification Status:</strong>
+            <span class="badge"
+                  th:classappend="${user.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${user.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
+                  th:text="${user.verificationStatus}"></span>
+        </p>
+        <p th:if="${user.rejectionReason != null}"><strong>Rejection Reason:</strong> <span th:text="${user.rejectionReason}"></span></p>
+        <p><strong>Registered:</strong> <span th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy, hh:mm a')}"></span></p>
+
+        <div th:if="${user.role.name() == 'LANDLORD'}">
+            <p><strong>Properties:</strong> <span th:text="${properties.size()}"></span></p>
+        </div>
+
+        <div class="form-actions" style="flex-wrap:wrap;">
+            <form th:if="${user.role.name() == 'LANDLORD' and user.verificationStatus.name() != 'VERIFIED'}"
+                  th:action="@{/admin/users/{id}/verify(id=${user.id})}" method="post">
+                <button type="submit" class="btn btn-success">Verify Landlord</button>
+            </form>
+            <form th:if="${user.role.name() == 'LANDLORD' and user.verificationStatus.name() != 'REJECTED'}"
+                  th:action="@{/admin/users/{id}/reject(id=${user.id})}" method="post">
+                <input type="hidden" name="reason" value="Did not meet requirements">
+                <button type="submit" class="btn btn-danger">Reject Verification</button>
+            </form>
+            <form th:if="${user.accountStatus.name() == 'ACTIVE'}"
+                  th:action="@{/admin/users/{id}/disable(id=${user.id})}" method="post">
+                <button type="submit" class="btn btn-danger">Disable Account</button>
+            </form>
+            <form th:if="${user.accountStatus.name() == 'DISABLED'}"
+                  th:action="@{/admin/users/{id}/activate(id=${user.id})}" method="post">
+                <button type="submit" class="btn btn-success">Activate Account</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="data-table" th:if="${user.role.name() == 'LANDLORD' and !properties.isEmpty()}" style="margin-top:24px;">
+        <thead><tr><th>Title</th><th>City</th><th>Rent</th><th>Status</th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${properties}">
+            <td th:text="${p.title}"></td>
+            <td th:text="${p.city}"></td>
+            <td th:text="${p.rentAmount}"></td>
+            <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:replace="~{layout :: footer}"></div>
+</main>
+</body>
+</html>

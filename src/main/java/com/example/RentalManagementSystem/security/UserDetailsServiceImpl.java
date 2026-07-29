@@ -1,6 +1,7 @@
 package com.example.RentalManagementSystem.security;
 
 import com.example.RentalManagementSystem.entity.User;
+import com.example.RentalManagementSystem.enums.AccountStatus;
 import com.example.RentalManagementSystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .authorities("ROLE_" + user.getRole().name())
+                .disabled(user.getAccountStatus() == AccountStatus.DISABLED)
                 .build();
     }
 }

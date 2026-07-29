@@ -45,6 +45,7 @@
             <option value="">All Statuses</option>
             <option value="VERIFIED" th:selected="${status == 'VERIFIED'}">VERIFIED</option>
             <option value="PENDING" th:selected="${status == 'PENDING'}">PENDING</option>
+            <option value="REJECTED" th:selected="${status == 'REJECTED'}">REJECTED</option>
         </select>
 
         <select name="sort">
@@ -65,7 +66,7 @@
     <table class="data-table" th:unless="${users.isEmpty()}">
         <thead>
         <tr>
-            <th>Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Registered</th><th>Actions</th>
+            <th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -77,13 +78,13 @@
                       th:text="${u.role}"></span>
             </td>
             <td>
-                <span class="badge" th:classappend="${u.emailVerified} ? 'badge-paid' : 'badge-pending'"
-                      th:text="${u.emailVerified} ? 'Verified' : 'Pending'"></span>
+                <span class="badge"
+                      th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
+                      th:text="${u.verificationStatus}"></span>
             </td>
             <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
             <td>
-                <a th:if="${u.role.name() == 'LANDLORD'}" th:href="@{/admin/landlords/{id}(id=${u.id})}"
-                   class="btn btn-sm btn-secondary">View</a>
+                <a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View</a>
             </td>
         </tr>
         </tbody>
