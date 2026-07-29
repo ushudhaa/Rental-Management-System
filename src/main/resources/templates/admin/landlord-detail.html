@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${landlord.fullName})}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div th:replace="~{layout :: backButton}"></div>
+    <div class="page-header">
+        <div>
+            <h1 th:text="${landlord.fullName}"></h1>
+            <div class="subtitle" th:text="${landlord.email} + ' · ' + ${properties.size()} + ' properties'"></div>
+        </div>
+    </div>
+
+    <div th:if="${properties.isEmpty()}" class="empty-state">
+        <p>This landlord hasn't added any properties yet.</p>
+    </div>
+
+    <table class="data-table" th:unless="${properties.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Title</th><th>City</th><th>Type</th><th>Rent</th><th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${properties}">
+            <td th:text="${p.title}"></td>
+            <td th:text="${p.city}"></td>
+            <td th:text="${p.type}"></td>
+            <td th:text="${p.rentAmount}"></td>
+            <td>
+                <span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}"
+                      th:text="${p.status}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:replace="~{layout :: footer}"></div>
+</main>
+</body>
+</html>
