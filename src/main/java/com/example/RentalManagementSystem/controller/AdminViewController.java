@@ -1,5 +1,6 @@
 package com.example.RentalManagementSystem.controller;
 
+import com.example.RentalManagementSystem.entity.Property;
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.AccountStatus;
 import com.example.RentalManagementSystem.enums.PropertyStatus;
@@ -35,8 +36,35 @@ public class AdminViewController {
         model.addAttribute("totalProperties", propertyRepository.count());
         model.addAttribute("availableProperties", propertyRepository.countByStatus(PropertyStatus.AVAILABLE));
         model.addAttribute("recentUsers", userRepository.findTop5ByOrderByCreatedAtDesc());
+        model.addAttribute("recentActivity", buildRecentActivity());
+        model.addAttribute("pendingCount", userRepository.countByRoleAndVerificationStatus(Role.LANDLORD, VerificationStatus.PENDING));
         return "admin/dashboard";
     }
+
+    private List<ActivityItem> buildRecentActivity() {
+        List<ActivityItem> activity = new java.util.ArrayList<>();
+
+        for (User u : userRepository.findTop5ByOrderByCreatedAtDesc()) {
+            activity.add(new ActivityItem(
+                    u.getFullName() + " registered as a " + u.getRole().name().toLowerCase() + ".",
+                    u.getCreatedAt()));
+        }
+
+        for (Property p : propertyRepository.findAll()) {
+            if (p.getCreatedAt() != null) {
+                activity.add(new ActivityItem(
+                        "A new property \"" + p.getTitle() + "\" was added.",
+                        p.getCreatedAt()));
+            }
+        }
+
+        return activity.stream()
+                .sorted(Comparator.comparing(ActivityItem::timestamp).reversed())
+                .limit(8)
+                .collect(Collectors.toList());
+    }
+
+    public record ActivityItem(String description, java.time.LocalDateTime timestamp) {}
 
     @GetMapping("/users")
     public String users(
@@ -143,5 +171,54 @@ public class AdminViewController {
     @GetMapping("/landlords/{id}")
     public String landlordDetail(@PathVariable Long id) {
         return "redirect:/admin/users/" + id;
+    }
+
+    @GetMapping("/properties")
+    public String properties(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            Model model) {
+
+        List<Property> allProperties = propertyRepository.findAll();
+
+        List<Property> filtered = allProperties.stream()
+                .filter(p -> search == null || search.isBlank()
+                        || p.getTitle().toLowerCase().contains(search.toLowerCase())
+                        || p.getCity().toLowerCase().contains(search.toLowerCase())
+                        || (p.getOwner() != null && p.getOwner().getFullName().toLowerCase().contains(search.toLowerCase())))
+                .filter(p -> status == null || status.isBlank() || p.getStatus().name().equals(status))
+                .sorted(Comparator.comparing(Property::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+
+        model.addAttribute("properties", filtered);
+        model.addAttribute("totalProperties", allProperties.size());
+        model.addAttribute("search", search);
+        model.addAttribute("status", status);
+
+        return "admin/properties";
+    }
+
+    @PostMapping("/properties/{id}/disable")
+    public String disableProperty(@PathVariable Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
+        property.setStatus(PropertyStatus.INACTIVE);
+        propertyRepository.save(property);
+        return "redirect:/admin/properties";
+    }
+
+    @PostMapping("/properties/{id}/activate")
+    public String activateProperty(@PathVariable Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
+        property.setStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
+        return "redirect:/admin/properties";
+    }
+
+    @PostMapping("/properties/{id}/delete")
+    public String deleteProperty(@PathVariable Long id) {
+        propertyRepository.deleteById(id);
+        return "redirect:/admin/properties";
     }
 }

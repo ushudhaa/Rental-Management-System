@@ -413,3 +413,45 @@ body {
 
 .badge-admin { background: #f3e8d9; color: #8a5a1f; }
 .badge-landlord { background: var(--info-bg); color: var(--info); }
+.notif-wrapper { position: relative; }
+.notif-bell {
+    background: none; border: none; color: var(--grey-300); font-size: 1.1rem;
+    cursor: pointer; position: relative; padding: 6px;
+}
+.notif-bell:hover { color: #fff; }
+.notif-badge {
+    position: absolute; top: 0; right: 0; background: var(--danger);
+    color: #fff; font-size: 0.65rem; font-weight: 700;
+    border-radius: 999px; padding: 1px 5px; min-width: 16px; text-align: center;
+}
+.notif-dropdown {
+    display: none; position: absolute; right: 0; top: 36px;
+    background: #fff; border: 1px solid var(--grey-200); border-radius: 10px;
+    box-shadow: var(--shadow-lg); width: 260px; z-index: 200; overflow: hidden;
+}
+.notif-dropdown.open { display: block; }
+.notif-header { padding: 12px 16px; font-weight: 700; font-size: 0.85rem; border-bottom: 1px solid var(--grey-100); color: var(--grey-800); }
+.notif-item {
+    display: block; padding: 12px 16px; font-size: 0.85rem; color: var(--grey-700);
+    text-decoration: none; border-bottom: 1px solid var(--grey-100);
+}
+.notif-item:hover { background: var(--olive-50); }
+.notif-item:last-child { border-bottom: none; }
+.notif-empty { color: var(--grey-400); cursor: default; }
+.notif-empty:hover { background: none; }
+/* Responsive sidebar-style nav on mobile */
+@media (max-width: 900px) {
+    .nav-links { flex-wrap: wrap; gap: 6px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .filter-bar input, .filter-bar select { width: 100%; }
+}
+
+/* Toast message (auto-dismiss alert) */
+.toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--grey-900); color: #fff; padding: 12px 18px;
+    border-radius: 8px; font-size: 0.85rem; box-shadow: var(--shadow-lg);
+    animation: fadein 0.2s ease;
+}
+@keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }

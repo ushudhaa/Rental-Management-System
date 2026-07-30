@@ -59,6 +59,10 @@
         <a href="/admin/users" class="btn btn-secondary btn-sm">Reset Filters</a>
     </form>
 
+    <div class="subtitle" style="margin-bottom:16px;" th:if="${totalFiltered > 0}">
+        Showing <span th:text="${showingFrom}"></span>–<span th:text="${showingTo}"></span> of <span th:text="${totalFiltered}"></span> users
+    </div>
+
     <div th:if="${users.isEmpty()}" class="empty-state">
         <p>No users match your filters.</p>
     </div>
@@ -89,7 +93,18 @@
         </tr>
         </tbody>
     </table>
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/admin/users(page=${currentPage - 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Previous</a>
 
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/admin/users(page=${i}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''"></a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/admin/users(page=${currentPage + 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Next</a>
+    </div>
     <div th:replace="~{layout :: footer}"></div>
 </main>
 </body>

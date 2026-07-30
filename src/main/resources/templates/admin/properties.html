@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Properties')}"></head>
+<body>
+<div th:replace="~{layout :: nav}"></div>
+
+<main class="container">
+    <div th:replace="~{layout :: backButton}"></div>
+    <div class="page-header">
+        <div>
+            <h1>All Properties</h1>
+            <div class="subtitle" th:text="${properties.size()} + ' of ' + ${totalProperties} + ' properties'"></div>
+        </div>
+    </div>
+
+    <form method="get" th:action="@{/admin/properties}" class="filter-bar">
+        <input type="text" name="search" placeholder="Search by name, location, or landlord..." th:value="${search}">
+
+        <select name="status">
+            <option value="">All Properties</option>
+            <option value="AVAILABLE" th:selected="${status == 'AVAILABLE'}">Available</option>
+            <option value="RENTED" th:selected="${status == 'RENTED'}">Occupied</option>
+            <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">Inactive</option>
+            <option value="UNDER_MAINTENANCE" th:selected="${status == 'UNDER_MAINTENANCE'}">Under Maintenance</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <a href="/admin/properties" class="btn btn-secondary btn-sm">Reset Filters</a>
+    </form>
+
+    <div th:if="${properties.isEmpty()}" class="empty-state">
+        <p>No properties match your filters.</p>
+    </div>
+
+    <table class="data-table" th:unless="${properties.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Property</th><th>Location</th><th>Rent</th><th>Landlord</th><th>Status</th><th>Created</th><th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${properties}">
+            <td th:text="${p.title}"></td>
+            <td th:text="${p.city}"></td>
+            <td th:text="${p.rentAmount}"></td>
+            <td th:text="${p.owner != null ? p.owner.fullName : 'Unassigned'}"></td>
+            <td>
+                <span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span>
+            </td>
+            <td th:text="${#temporals.format(p.createdAt, 'MMM dd, yyyy')}"></td>
+            <td class="actions">
+                <form th:if="${p.status.name() != 'INACTIVE'}" th:action="@{/admin/properties/{id}/disable(id=${p.id})}" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">Disable</button>
+                </form>
+                <form th:if="${p.status.name() == 'INACTIVE'}" th:action="@{/admin/properties/{id}/activate(id=${p.id})}" method="post">
+                    <button type="submit" class="btn btn-sm btn-success">Activate</button>
+                </form>
+                <form th:action="@{/admin/properties/{id}/delete(id=${p.id})}" method="post"
+                      onsubmit="return confirm('Delete this property permanently?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:replace="~{layout :: footer}"></div>
+</main>
+</body>
+</html>
