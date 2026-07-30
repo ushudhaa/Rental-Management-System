@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:fragment="head(title)">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title} + ' | Rental Management System'">RMS</title>
@@ -11,25 +12,7 @@
     <div class="nav-links">
         <a href="/properties">Properties</a>
         <a href="/payments">Payments</a>
-        <a href="/admin/dashboard">Dashboard</a>
-        <a href="/admin/users">Users</a>
-        <a href="/admin/properties">All Properties</a>
         <a href="/swagger-ui.html" target="_blank">API Docs</a>
-
-        <div class="notif-wrapper" th:if="${pendingCount != null}">
-            <button type="button" class="notif-bell" onclick="document.getElementById('notifDropdown').classList.toggle('open')">
-                Notification
-                <span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span>
-            </button>
-            <div id="notifDropdown" class="notif-dropdown">
-                <div class="notif-header">Notifications</div>
-                <a th:if="${pendingCount > 0}" href="/admin/users?status=PENDING" class="notif-item">
-                    <span th:text="${pendingCount} + ' landlord(s) waiting for verification'"></span>
-                </a>
-                <div th:if="${pendingCount == 0}" class="notif-item notif-empty">No new notifications</div>
-            </div>
-        </div>
-
         <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
             <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
         </form>
