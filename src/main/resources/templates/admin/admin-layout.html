@@ -14,16 +14,16 @@
     <div class="sidebar-brand">RMS</div>
 
     <div class="sidebar-section">MAIN MENU</div>
-    <a href="/admin/dashboard" class="sidebar-link">📊 Dashboard</a>
-    <a href="/admin/users" class="sidebar-link">👥 Users</a>
+    <a href="/admin/dashboard" class="sidebar-link">Dashboard</a>
+    <a href="/admin/users" class="sidebar-link">Users</a>
 
     <div class="sidebar-section">SYSTEM</div>
-    <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">📄 API Documentation</a>
+    <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">API Documentation</a>
 
     <div class="sidebar-section">ACCOUNT</div>
     <a href="/admin/profile" class="sidebar-link">👤 Profile</a>
     <form th:action="@{/logout}" method="post">
-      <button type="submit" class="sidebar-link sidebar-logout">🚪 Logout</button>
+      <button type="submit" class="sidebar-link sidebar-logout">Logout</button>
     </form>
   </aside>
 
@@ -31,7 +31,7 @@
     <header class="admin-topbar">
       <h1 th:text="${pageTitle}"></h1>
       <div class="admin-topbar-right">
-        <span class="notif-bell">🔔</span>
+        <span class="notif-bell">Notification</span>
         <span class="admin-name" sec:authentication="name"></span>
         <form th:action="@{/logout}" method="post" style="display:inline;">
           <button type="submit" class="btn btn-sm btn-secondary">Logout</button>

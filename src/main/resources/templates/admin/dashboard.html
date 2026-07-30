@@ -2,18 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{layout :: head('Dashboard')}"></head>
 <body class="admin-shell">
-<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
+<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
 <aside class="admin-sidebar">
     <div class="sidebar-brand">RMS</div>
     <div class="sidebar-section">MAIN MENU</div>
-    <a href="/admin/dashboard" class="sidebar-link active">📊 Dashboard</a>
-    <a href="/admin/users" class="sidebar-link">👥 Users</a>
+    <a href="/admin/dashboard" class="sidebar-link active">
+        <span class="sidebar-icon">D</span> Dashboard
+    </a>
+    <a href="/admin/users" class="sidebar-link">
+        <span class="sidebar-icon">U</span> Users
+    </a>
     <div class="sidebar-section">SYSTEM</div>
-    <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">📄 API Documentation</a>
+    <a href="/swagger-ui.html" target="_blank" class="sidebar-link">
+        <span class="sidebar-icon">A</span> API Documentation
+    </a>
     <div class="sidebar-section">ACCOUNT</div>
-    <a href="/admin/profile" class="sidebar-link">👤 Profile</a>
+    <a href="/admin/profile" class="sidebar-link">
+        <span class="sidebar-icon">P</span> Profile
+    </a>
     <form th:action="@{/logout}" method="post">
-        <button type="submit" class="sidebar-link sidebar-logout">🚪 Logout</button>
+        <button type="submit" class="sidebar-link sidebar-logout">
+            <span class="sidebar-icon">L</span> Logout
+        </button>
     </form>
 </aside>
 
@@ -21,7 +31,7 @@
     <header class="admin-topbar">
         <h1>Dashboard</h1>
         <div class="admin-topbar-right">
-            <span class="notif-bell">🔔<span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span></span>
+            <span class="notif-bell">N<span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span></span>
             <span class="admin-name" sec:authentication="name"></span>
         </div>
     </header>
@@ -29,25 +39,21 @@
     <div class="admin-content">
         <div class="stat-grid">
             <div class="stat-card">
-                <div class="stat-icon">👥</div>
                 <div class="stat-value" th:text="${totalUsers}"></div>
                 <div class="stat-title">Total Users</div>
                 <div class="stat-desc">All registered accounts</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🏠</div>
                 <div class="stat-value" th:text="${totalLandlords}"></div>
                 <div class="stat-title">Total Landlords</div>
                 <div class="stat-desc">Users with the LANDLORD role</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">✅</div>
                 <div class="stat-value" th:text="${verifiedLandlords}"></div>
                 <div class="stat-title">Verified Landlords</div>
                 <div class="stat-desc">Approved landlord accounts</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⏳</div>
                 <div class="stat-value" th:text="${pendingLandlords}"></div>
                 <div class="stat-title">Pending Verifications</div>
                 <div class="stat-desc">Waiting for admin review</div>
@@ -58,12 +64,12 @@
         <div class="quick-actions">
             <a href="/admin/users" class="btn btn-primary">View All Users</a>
             <a href="/admin/users?status=PENDING" class="btn btn-secondary">Review Pending Landlords</a>
-            <a href="/swagger-ui/index.html" target="_blank" class="btn btn-secondary">API Documentation</a>
+            <a href="/swagger-ui.html" target="_blank" class="btn btn-secondary">API Documentation</a>
         </div>
 
         <div class="page-header">
             <h2 style="font-size:1.1rem;">Recent Users</h2>
-            <a href="/admin/users" class="btn btn-sm btn-secondary">View All Users →</a>
+            <a href="/admin/users" class="btn btn-sm btn-secondary">View All Users</a>
         </div>
         <table class="data-table">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th></th></tr></thead>
@@ -72,7 +78,11 @@
                 <td th:text="${u.fullName}"></td>
                 <td th:text="${u.email}"></td>
                 <td th:text="${u.role}"></td>
-                <td><span class="badge" th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')" th:text="${u.verificationStatus}"></span></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
+                          th:text="${u.verificationStatus}"></span>
+                </td>
                 <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
                 <td><a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View Details</a></td>
             </tr>
