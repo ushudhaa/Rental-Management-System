@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head('Profile')}"></head>
+<body class="admin-shell">
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-section">MAIN MENU</div>
+  <a href="/admin/dashboard" class="sidebar-link">📊 Dashboard</a>
+  <a href="/admin/users" class="sidebar-link">👥 Users</a>
+  <div class="sidebar-section">SYSTEM</div>
+  <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">📄 API Documentation</a>
+  <div class="sidebar-section">ACCOUNT</div>
+  <a href="/admin/profile" class="sidebar-link active">👤 Profile</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="sidebar-link sidebar-logout">🚪 Logout</button>
+  </form>
+</aside>
+<div class="admin-main">
+  <header class="admin-topbar"><h1>Profile</h1></header>
+  <div class="admin-content">
+    <div class="form-card" style="max-width:500px;">
+      <p><strong>Name:</strong> <span th:text="${admin.fullName}"></span></p>
+      <p><strong>Email:</strong> <span th:text="${admin.email}"></span></p>
+      <p><strong>Role:</strong> <span th:text="${admin.role}"></span></p>
+      <p><strong>Created:</strong> <span th:text="${#temporals.format(admin.createdAt, 'MMM dd, yyyy')}"></span></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
