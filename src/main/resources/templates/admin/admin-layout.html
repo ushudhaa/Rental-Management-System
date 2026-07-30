@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title} + ' | RMS Admin'">RMS</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:fragment="shell(title, pageTitle)" class="admin-shell">
+  <button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">RMS</div>
+
+    <div class="sidebar-section">MAIN MENU</div>
+    <a href="/admin/dashboard" class="sidebar-link">📊 Dashboard</a>
+    <a href="/admin/users" class="sidebar-link">👥 Users</a>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">📄 API Documentation</a>
+
+    <div class="sidebar-section">ACCOUNT</div>
+    <a href="/admin/profile" class="sidebar-link">👤 Profile</a>
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="sidebar-link sidebar-logout">🚪 Logout</button>
+    </form>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <h1 th:text="${pageTitle}"></h1>
+      <div class="admin-topbar-right">
+        <span class="notif-bell">🔔</span>
+        <span class="admin-name" sec:authentication="name"></span>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+        </form>
+      </div>
+    </header>
+    <div class="admin-content">
+      <div th:insert="${content}"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
