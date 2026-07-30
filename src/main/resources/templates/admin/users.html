@@ -1,111 +1,133 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{layout :: head('Registered Users')}"></head>
-<body>
-<div th:replace="~{layout :: nav}"></div>
-
-<main class="container">
-    <div th:replace="~{layout :: backButton}"></div>
-    <div class="page-header">
-        <div>
-            <h1>Registered Users</h1>
-            <div class="subtitle" th:text="${users.size()} + ' of ' + ${totalUsers} + ' accounts shown'"></div>
-        </div>
-    </div>
-
-    <div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:24px;">
-        <div class="stat-card">
-            <div class="stat-value" th:text="${totalUsers}"></div>
-            <div class="stat-title">Total Users</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" th:text="${totalAdmins}"></div>
-            <div class="stat-title">Admins</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" th:text="${totalLandlords}"></div>
-            <div class="stat-title">Landlords</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" th:text="${totalPending}"></div>
-            <div class="stat-title">Pending</div>
-        </div>
-    </div>
-
-    <form method="get" th:action="@{/admin/users}" class="filter-bar">
-        <input type="text" name="search" placeholder="Search by name or email..." th:value="${search}">
-
-        <select name="role">
-            <option value="">All Roles</option>
-            <option value="ADMIN" th:selected="${role == 'ADMIN'}">ADMIN</option>
-            <option value="LANDLORD" th:selected="${role == 'LANDLORD'}">LANDLORD</option>
-        </select>
-
-        <select name="status">
-            <option value="">All Statuses</option>
-            <option value="VERIFIED" th:selected="${status == 'VERIFIED'}">VERIFIED</option>
-            <option value="PENDING" th:selected="${status == 'PENDING'}">PENDING</option>
-            <option value="REJECTED" th:selected="${status == 'REJECTED'}">REJECTED</option>
-        </select>
-
-        <select name="sort">
-            <option value="newest" th:selected="${sort == 'newest'}">Newest First</option>
-            <option value="oldest" th:selected="${sort == 'oldest'}">Oldest First</option>
-            <option value="name_asc" th:selected="${sort == 'name_asc'}">Name A-Z</option>
-            <option value="name_desc" th:selected="${sort == 'name_desc'}">Name Z-A</option>
-        </select>
-
-        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-        <a href="/admin/users" class="btn btn-secondary btn-sm">Reset Filters</a>
+<body class="admin-shell">
+<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
+<aside class="admin-sidebar">
+    <div class="sidebar-brand">RMS</div>
+    <div class="sidebar-section">MAIN MENU</div>
+    <a href="/admin/dashboard" class="sidebar-link">Dashboard</a>
+    <a href="/admin/users" class="sidebar-link active">👥 Users</a>
+    <div class="sidebar-section">SYSTEM</div>
+    <a href="/swagger-ui/index.html" target="_blank" class="sidebar-link">API Documentation</a>
+    <div class="sidebar-section">ACCOUNT</div>
+    <a href="/admin/profile" class="sidebar-link">Profile</a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="sidebar-link sidebar-logout">Logout</button>
     </form>
+</aside>
 
-    <div class="subtitle" style="margin-bottom:16px;" th:if="${totalFiltered > 0}">
-        Showing <span th:text="${showingFrom}"></span>–<span th:text="${showingTo}"></span> of <span th:text="${totalFiltered}"></span> users
+<div class="admin-main">
+    <header class="admin-topbar">
+        <h1>Users</h1>
+        <div class="admin-topbar-right">
+            <span class="notif-bell">🔔</span>
+            <span class="admin-name" sec:authentication="name"></span>
+        </div>
+    </header>
+
+    <div class="admin-content">
+        <div class="page-header">
+            <div>
+                <h1>Registered Users</h1>
+                <div class="subtitle" th:text="${users.size()} + ' of ' + ${totalUsers} + ' accounts shown'"></div>
+            </div>
+        </div>
+
+        <div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:24px;">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalUsers}"></div>
+                <div class="stat-title">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalAdmins}"></div>
+                <div class="stat-title">Admins</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalLandlords}"></div>
+                <div class="stat-title">Landlords</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalPending}"></div>
+                <div class="stat-title">Pending</div>
+            </div>
+        </div>
+
+        <form method="get" th:action="@{/admin/users}" class="filter-bar">
+            <input type="text" name="search" placeholder="Search by name or email..." th:value="${search}">
+
+            <select name="role">
+                <option value="">All Roles</option>
+                <option value="ADMIN" th:selected="${role == 'ADMIN'}">ADMIN</option>
+                <option value="LANDLORD" th:selected="${role == 'LANDLORD'}">LANDLORD</option>
+            </select>
+
+            <select name="status">
+                <option value="">All Statuses</option>
+                <option value="VERIFIED" th:selected="${status == 'VERIFIED'}">VERIFIED</option>
+                <option value="PENDING" th:selected="${status == 'PENDING'}">PENDING</option>
+                <option value="REJECTED" th:selected="${status == 'REJECTED'}">REJECTED</option>
+            </select>
+
+            <select name="sort">
+                <option value="newest" th:selected="${sort == 'newest'}">Newest First</option>
+                <option value="oldest" th:selected="${sort == 'oldest'}">Oldest First</option>
+                <option value="name_asc" th:selected="${sort == 'name_asc'}">Name A-Z</option>
+                <option value="name_desc" th:selected="${sort == 'name_desc'}">Name Z-A</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+            <a href="/admin/users" class="btn btn-secondary btn-sm">Reset Filters</a>
+        </form>
+
+        <div class="subtitle" style="margin-bottom:16px;" th:if="${totalFiltered > 0}">
+            Showing <span th:text="${showingFrom}"></span>–<span th:text="${showingTo}"></span> of <span th:text="${totalFiltered}"></span> users
+        </div>
+
+        <div th:if="${users.isEmpty()}" class="empty-state">
+            <p>No users match your filters.</p>
+        </div>
+
+        <table class="data-table" th:unless="${users.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.fullName}"></td>
+                <td th:text="${u.email}"></td>
+                <td>
+                    <span class="badge" th:classappend="${u.role.name() == 'ADMIN'} ? 'badge-admin' : 'badge-landlord'"
+                          th:text="${u.role}"></span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
+                          th:text="${u.verificationStatus}"></span>
+                </td>
+                <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
+                <td>
+                    <a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View Details</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/users(page=${currentPage - 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Previous</a>
+
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+               th:href="@{/admin/users(page=${i}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'active' : ''"></a>
+
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/admin/users(page=${currentPage + 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Next</a>
+        </div>
     </div>
-
-    <div th:if="${users.isEmpty()}" class="empty-state">
-        <p>No users match your filters.</p>
-    </div>
-
-    <table class="data-table" th:unless="${users.isEmpty()}">
-        <thead>
-        <tr>
-            <th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="u : ${users}">
-            <td th:text="${u.fullName}"></td>
-            <td th:text="${u.email}"></td>
-            <td>
-                <span class="badge" th:classappend="${u.role.name() == 'ADMIN'} ? 'badge-admin' : 'badge-landlord'"
-                      th:text="${u.role}"></span>
-            </td>
-            <td>
-                <span class="badge"
-                      th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
-                      th:text="${u.verificationStatus}"></span>
-            </td>
-            <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
-            <td>
-                <a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="pagination" th:if="${totalPages > 1}">
-        <a th:if="${currentPage > 0}"
-           th:href="@{/admin/users(page=${currentPage - 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Previous</a>
-
-        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-           th:href="@{/admin/users(page=${i}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}"
-           th:text="${i + 1}"
-           th:classappend="${i == currentPage} ? 'active' : ''"></a>
-
-        <a th:if="${currentPage < totalPages - 1}"
-           th:href="@{/admin/users(page=${currentPage + 1}, size=${pageSize}, search=${search}, role=${role}, status=${status}, sort=${sort})}">Next</a>
-    </div>
-    <div th:replace="~{layout :: footer}"></div>
-</main>
+</div>
 </body>
 </html>
