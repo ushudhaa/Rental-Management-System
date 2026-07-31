@@ -1,5 +1,6 @@
 package com.example.RentalManagementSystem.controller;
 
+import java.security.Principal;
 import com.example.RentalManagementSystem.entity.Property;
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.AccountStatus;
@@ -65,6 +66,15 @@ public class AdminViewController {
     }
 
     public record ActivityItem(String description, java.time.LocalDateTime timestamp) {}
+
+    @GetMapping("/profile")
+    public String profile(Model model,
+                          Principal principal) {
+        User admin = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        model.addAttribute("admin", admin);
+        return "admin/profile";
+    }
 
     @GetMapping("/users")
     public String users(
