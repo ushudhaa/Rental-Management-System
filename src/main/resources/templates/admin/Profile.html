@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head('Profile')}"></head>
 <body class="admin-shell">
 <button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
@@ -44,9 +44,8 @@
       <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
       <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
 
-      <!-- Profile overview -->
       <div class="profile-overview">
-        <div class="profile-avatar" th:text="${#strings.substring(admin.fullName,0,1)} + ${#strings.substring(admin.fullName, #strings.lastIndexOf(admin.fullName,' ')+1, #strings.lastIndexOf(admin.fullName,' ')+2)}"></div>
+        <div class="profile-avatar" th:text="${initials}"></div>
         <div class="profile-overview-info">
           <div class="profile-name" th:text="${admin.fullName}"></div>
           <div class="profile-subtitle">Administrator</div>
@@ -60,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Account information -->
       <div class="profile-card">
         <h2>Account Information</h2>
         <p class="card-subtitle">Your personal account details.</p>
@@ -84,7 +82,6 @@
         </div>
       </div>
 
-      <!-- Security -->
       <div class="profile-card">
         <h2>Security</h2>
         <p class="card-subtitle">Manage your account password and security settings.</p>
@@ -99,7 +96,6 @@
         </div>
       </div>
 
-      <!-- Account activity -->
       <div class="profile-card">
         <h2>Account Activity</h2>
         <div class="info-grid">
@@ -114,16 +110,15 @@
   </div>
 </div>
 
-<!-- Edit profile modal -->
 <div id="editModal" class="modal-overlay">
   <div class="modal-box">
     <h2>Edit Profile</h2>
     <form th:action="@{/admin/profile/edit}" method="post">
       <label>Full Name</label>
-      <input type="text" name="fullName" th:value="${admin.fullName}" required>
+      <input type="text" name="fullName" th:value="${admin.fullName}" required />
 
       <label>Email Address</label>
-      <input type="email" name="email" th:value="${admin.email}" required>
+      <input type="email" name="email" th:value="${admin.email}" required />
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Save Changes</button>
