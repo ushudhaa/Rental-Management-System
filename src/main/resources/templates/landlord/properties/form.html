@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${isEdit} ? 'Edit Property' : 'Add Property')}"></head>
+<body class="admin-shell">
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-section">MAIN MENU</div>
+  <a href="/landlord/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
+  <a href="/landlord/properties" class="sidebar-link active"><span class="sidebar-icon">H</span> My Properties</a>
+  <a href="/landlord/payments" class="sidebar-link"><span class="sidebar-icon">$</span> My Payments</a>
+  <div class="sidebar-section">ACCOUNT</div>
+  <a href="/landlord/profile" class="sidebar-link"><span class="sidebar-icon">P</span> Profile</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+  </form>
+</aside>
+
+<div class="admin-main">
+  <header class="admin-topbar"><h1 th:text="${isEdit} ? 'Edit Property' : 'Add New Property'"></h1></header>
+  <div class="admin-content">
+    <form th:action="${isEdit} ? @{/landlord/properties/{id}(id=${propertyId})} : @{/landlord/properties}"
+          th:object="${propertyRequest}" method="post" class="form-card">
+
+      <label>Property Name</label>
+      <input type="text" th:field="*{title}" placeholder="Enter property name" required>
+
+      <label>Property Type</label>
+      <select th:field="*{type}">
+        <option th:each="t : ${T(com.example.RentalManagementSystem.enums.PropertyType).values()}"
+                th:value="${t}" th:text="${t}"></option>
+      </select>
+
+      <label>Location (City)</label>
+      <input type="text" th:field="*{city}" placeholder="Enter city" required>
+
+      <label>Full Address</label>
+      <input type="text" th:field="*{address}" placeholder="Enter full address" required>
+
+      <div class="form-row">
+        <div>
+          <label>Monthly Rent</label>
+          <input type="number" step="0.01" th:field="*{rentAmount}" placeholder="Enter monthly rent in NPR" required>
+        </div>
+        <div>
+          <label>Bedrooms</label>
+          <input type="number" min="0" th:field="*{bedrooms}">
+        </div>
+        <div>
+          <label>Bathrooms</label>
+          <input type="number" min="0" th:field="*{bathrooms}">
+        </div>
+      </div>
+
+      <label>Property Description</label>
+      <textarea th:field="*{description}"></textarea>
+
+      <label>Availability Status</label>
+      <select th:field="*{status}">
+        <option th:each="s : ${T(com.example.RentalManagementSystem.enums.PropertyStatus).values()}"
+                th:value="${s}" th:text="${s}"></option>
+      </select>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" th:text="${isEdit} ? 'Save Changes' : 'Save Property'"></button>
+        <a href="/landlord/properties" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
