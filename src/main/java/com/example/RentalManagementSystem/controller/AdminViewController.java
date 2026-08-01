@@ -156,7 +156,17 @@ public class AdminViewController {
         User admin = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         model.addAttribute("admin", admin);
+        model.addAttribute("initials", getInitials(admin.getFullName()));
         return "admin/profile";
+    }
+
+    private String getInitials(String fullName) {
+        if (fullName == null || fullName.isBlank()) return "?";
+        String[] parts = fullName.trim().split("\\s+");
+        if (parts.length == 1) {
+            return parts[0].substring(0, 1).toUpperCase();
+        }
+        return (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
     }
 
     @PostMapping("/profile/edit")
