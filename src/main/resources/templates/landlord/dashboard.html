@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Dashboard')}"></head>
+<body class="admin-shell">
+<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
+<aside class="admin-sidebar">
+    <div class="sidebar-brand">RMS</div>
+    <div class="sidebar-section">MAIN MENU</div>
+    <a href="/landlord/dashboard" class="sidebar-link active"><span class="sidebar-icon">D</span> Dashboard</a>
+    <a href="/landlord/properties" class="sidebar-link"><span class="sidebar-icon">H</span> My Properties</a>
+    <a href="/landlord/payments" class="sidebar-link"><span class="sidebar-icon">$</span> My Payments</a>
+    <div class="sidebar-section">ACCOUNT</div>
+    <a href="/landlord/profile" class="sidebar-link"><span class="sidebar-icon">P</span> Profile</a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+    </form>
+</aside>
+
+<div class="admin-main">
+    <header class="admin-topbar"><h1>Dashboard</h1></header>
+    <div class="admin-content">
+        <p class="page-subtitle">Welcome back. Here is an overview of your rental properties.</p>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalProperties}"></div>
+                <div class="stat-title">Total Properties</div>
+                <div class="stat-desc">Properties you currently manage</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${availableProperties}"></div>
+                <div class="stat-title">Available Properties</div>
+                <div class="stat-desc">Available for rent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${occupiedProperties}"></div>
+                <div class="stat-title">Occupied Properties</div>
+                <div class="stat-desc">Currently rented</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalPayments}"></div>
+                <div class="stat-title">Total Payments</div>
+                <div class="stat-desc">Payments related to your properties</div>
+            </div>
+        </div>
+
+        <div class="page-header"><h2 style="font-size:1.1rem;">Quick Actions</h2></div>
+        <div class="quick-actions">
+            <a href="/landlord/properties/new" class="btn btn-primary">Add New Property</a>
+            <a href="/landlord/properties" class="btn btn-secondary">View My Properties</a>
+            <a href="/landlord/payments" class="btn btn-secondary">View My Payments</a>
+        </div>
+
+        <div class="page-header"><h2 style="font-size:1.1rem;">Recent Properties</h2></div>
+        <div th:if="${recentProperties.isEmpty()}" class="empty-state"><p>No properties yet.</p></div>
+        <table class="data-table" th:unless="${recentProperties.isEmpty()}">
+            <thead><tr><th>Title</th><th>City</th><th>Rent</th><th>Status</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${recentProperties}">
+                <td th:text="${p.title}"></td>
+                <td th:text="${p.city}"></td>
+                <td th:text="${p.rentAmount}"></td>
+                <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
