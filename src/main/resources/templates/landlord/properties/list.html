@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('My Properties')}"></head>
+<body class="admin-shell">
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-section">MAIN MENU</div>
+  <a href="/landlord/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
+  <a href="/landlord/properties" class="sidebar-link active"><span class="sidebar-icon">H</span> My Properties</a>
+  <a href="/landlord/payments" class="sidebar-link"><span class="sidebar-icon">$</span> My Payments</a>
+  <div class="sidebar-section">ACCOUNT</div>
+  <a href="/landlord/profile" class="sidebar-link"><span class="sidebar-icon">P</span> Profile</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+  </form>
+</aside>
+
+<div class="admin-main">
+  <header class="admin-topbar"><h1>My Properties</h1></header>
+  <div class="admin-content">
+    <div class="page-header">
+      <div>
+        <h1>My Properties</h1>
+        <div class="subtitle" th:text="${propertyPage.totalElements} + ' properties'"></div>
+      </div>
+      <a href="/landlord/properties/new" class="btn btn-primary">+ Add New Property</a>
+    </div>
+
+    <div th:if="${propertyPage.content.isEmpty()}" class="empty-state">
+      <p><strong>No properties yet</strong></p>
+      <p>You have not added any rental properties. Add your first property to begin managing your rentals.</p>
+      <a href="/landlord/properties/new" class="btn btn-primary" style="margin-top:12px;">+ Add Your First Property</a>
+    </div>
+
+    <table class="data-table" th:unless="${propertyPage.content.isEmpty()}">
+      <thead>
+      <tr><th>Title</th><th>City</th><th>Type</th><th>Rent</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="p : ${propertyPage.content}">
+        <td th:text="${p.title}"></td>
+        <td th:text="${p.city}"></td>
+        <td th:text="${p.type}"></td>
+        <td th:text="${p.rentAmount}"></td>
+        <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span></td>
+        <td th:text="${#temporals.format(p.createdAt, 'MMM dd, yyyy')}"></td>
+        <td class="actions">
+          <a th:href="@{/landlord/properties/{id}(id=${p.id})}" class="btn btn-sm btn-secondary">View</a>
+          <a th:href="@{/landlord/properties/edit/{id}(id=${p.id})}" class="btn btn-sm btn-secondary">Edit</a>
+          <form th:action="@{/landlord/properties/{id}/delete(id=${p.id})}" method="post" style="display:inline"
+                onsubmit="return confirm('Delete this property? This action cannot be undone.');">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" th:if="${propertyPage.totalPages > 1}">
+      <a th:each="i : ${#numbers.sequence(0, propertyPage.totalPages - 1)}"
+         th:href="@{/landlord/properties(page=${i})}"
+         th:text="${i + 1}"
+         th:classappend="${i == propertyPage.number} ? 'active' : ''"></a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
