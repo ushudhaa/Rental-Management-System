@@ -17,7 +17,7 @@ public class HomeController {
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(role -> role.equals("ROLE_ADMIN"));
 
-            return isAdmin ? "redirect:/admin/dashboard" : "redirect:/properties";
+            return isAdmin ? "redirect:/admin/dashboard" : "redirect:/landlord/dashboard";
         }
         return "redirect:/login";
     }
