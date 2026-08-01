@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Profile')}"></head>
+<body class="admin-shell">
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-section">MAIN MENU</div>
+  <a href="/landlord/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
+  <a href="/landlord/properties" class="sidebar-link"><span class="sidebar-icon">H</span> My Properties</a>
+  <a href="/landlord/payments" class="sidebar-link"><span class="sidebar-icon">$</span> My Payments</a>
+  <div class="sidebar-section">ACCOUNT</div>
+  <a href="/landlord/profile" class="sidebar-link active"><span class="sidebar-icon">P</span> Profile</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+  </form>
+</aside>
+
+<div class="admin-main">
+  <header class="admin-topbar"><h1>Profile</h1></header>
+  <div class="admin-content">
+    <div class="profile-wrap">
+      <p class="page-subtitle">Manage your account information and security settings.</p>
+
+      <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
+      <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
+      <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
+
+      <div class="profile-overview">
+        <div class="profile-avatar" th:text="${initials}"></div>
+        <div class="profile-overview-info">
+          <div class="profile-name" th:text="${landlord.fullName}"></div>
+          <div class="profile-subtitle">Landlord</div>
+          <div class="profile-badges">
+            <span class="badge badge-landlord" th:text="${landlord.role}"></span>
+            <span class="badge badge-paid">ACTIVE</span>
+          </div>
+        </div>
+        <div class="profile-overview-action">
+          <button type="button" class="btn btn-primary" onclick="document.getElementById('editModal').classList.add('open')">Edit Profile</button>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <h2>Account Information</h2>
+        <div class="info-grid">
+          <div>
+            <div class="info-label">Full Name</div>
+            <div class="info-value" th:text="${landlord.fullName}"></div>
+          </div>
+          <div>
+            <div class="info-label">Role</div>
+            <div class="info-value" th:text="${landlord.role}"></div>
+          </div>
+          <div>
+            <div class="info-label">Email Address</div>
+            <div class="info-value" th:text="${landlord.email}"></div>
+          </div>
+          <div>
+            <div class="info-label">Account Created</div>
+            <div class="info-value" th:text="${#temporals.format(landlord.createdAt, 'MMM dd, yyyy')}"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <h2>Security</h2>
+        <div class="info-grid">
+          <div>
+            <div class="info-label">Password</div>
+            <div class="info-value">********</div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <a href="/landlord/profile/change-password" class="btn btn-secondary">Change Password</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Edit Profile</h2>
+    <form th:action="@{/landlord/profile/edit}" method="post">
+      <label>Full Name</label>
+      <input type="text" name="fullName" th:value="${landlord.fullName}" required>
+      <label>Email Address</label>
+      <input type="email" name="email" th:value="${landlord.email}" required>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('editModal').classList.remove('open')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
