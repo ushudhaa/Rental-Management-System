@@ -31,17 +31,105 @@
   <header class="admin-topbar">
     <h1>Profile</h1>
     <div class="admin-topbar-right">
-      <span class="admin-name" sec:authentication="name"></span>
+      <span class="admin-name" th:text="${admin.email}"></span>
     </div>
   </header>
 
   <div class="admin-content">
-    <div class="form-card" style="max-width:500px;">
-      <p><strong>Name:</strong> <span th:text="${admin.fullName}"></span></p>
-      <p><strong>Email:</strong> <span th:text="${admin.email}"></span></p>
-      <p><strong>Role:</strong> <span th:text="${admin.role}"></span></p>
-      <p><strong>Created:</strong> <span th:text="${#temporals.format(admin.createdAt, 'MMM dd, yyyy')}"></span></p>
+    <div class="profile-wrap">
+
+      <p class="page-subtitle">Manage your account information and security settings.</p>
+
+      <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
+      <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
+      <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
+
+      <!-- Profile overview -->
+      <div class="profile-overview">
+        <div class="profile-avatar" th:text="${#strings.substring(admin.fullName,0,1)} + ${#strings.substring(admin.fullName, #strings.lastIndexOf(admin.fullName,' ')+1, #strings.lastIndexOf(admin.fullName,' ')+2)}"></div>
+        <div class="profile-overview-info">
+          <div class="profile-name" th:text="${admin.fullName}"></div>
+          <div class="profile-subtitle">Administrator</div>
+          <div class="profile-badges">
+            <span class="badge badge-admin" th:text="${admin.role}"></span>
+            <span class="badge badge-paid">ACTIVE</span>
+          </div>
+        </div>
+        <div class="profile-overview-action">
+          <button type="button" class="btn btn-primary" onclick="document.getElementById('editModal').classList.add('open')">Edit Profile</button>
+        </div>
+      </div>
+
+      <!-- Account information -->
+      <div class="profile-card">
+        <h2>Account Information</h2>
+        <p class="card-subtitle">Your personal account details.</p>
+        <div class="info-grid">
+          <div>
+            <div class="info-label">Full Name</div>
+            <div class="info-value" th:text="${admin.fullName}"></div>
+          </div>
+          <div>
+            <div class="info-label">Role</div>
+            <div class="info-value" th:text="${admin.role}"></div>
+          </div>
+          <div>
+            <div class="info-label">Email Address</div>
+            <div class="info-value" th:text="${admin.email}"></div>
+          </div>
+          <div>
+            <div class="info-label">Account Created</div>
+            <div class="info-value" th:text="${#temporals.format(admin.createdAt, 'MMM dd, yyyy')}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="profile-card">
+        <h2>Security</h2>
+        <p class="card-subtitle">Manage your account password and security settings.</p>
+        <div class="info-grid">
+          <div>
+            <div class="info-label">Password</div>
+            <div class="info-value">********</div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <a href="/admin/profile/change-password" class="btn btn-secondary">Change Password</a>
+        </div>
+      </div>
+
+      <!-- Account activity -->
+      <div class="profile-card">
+        <h2>Account Activity</h2>
+        <div class="info-grid">
+          <div>
+            <div class="info-label">Account Created</div>
+            <div class="info-value" th:text="${#temporals.format(admin.createdAt, 'MMM dd, yyyy')}"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
+
+<!-- Edit profile modal -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Edit Profile</h2>
+    <form th:action="@{/admin/profile/edit}" method="post">
+      <label>Full Name</label>
+      <input type="text" name="fullName" th:value="${admin.fullName}" required>
+
+      <label>Email Address</label>
+      <input type="email" name="email" th:value="${admin.email}" required>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('editModal').classList.remove('open')">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
 </body>

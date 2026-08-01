@@ -2,6 +2,8 @@ package com.example.RentalManagementSystem.controller;
 
 import java.security.Principal;
 import com.example.RentalManagementSystem.entity.Property;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.AccountStatus;
 import com.example.RentalManagementSystem.enums.PropertyStatus;
@@ -68,12 +70,74 @@ public class AdminViewController {
     public record ActivityItem(String description, java.time.LocalDateTime timestamp) {}
 
     @GetMapping("/profile")
-    public String profile(Model model,
-                          Principal principal) {
+    public String profile(Model model, Principal principal) {
         User admin = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         model.addAttribute("admin", admin);
         return "admin/profile";
+    }
+
+    @PostMapping("/profile/edit")
+    public String editProfile(@RequestParam String fullName,
+                              @RequestParam String email,
+                              Principal principal,
+                              Model model) {
+        User admin = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!email.equalsIgnoreCase(admin.getEmail()) && userRepository.existsByEmail(email)) {
+            model.addAttribute("admin", admin);
+            model.addAttribute("editError", "That email is already in use.");
+            return "admin/profile";
+        }
+
+        admin.setFullName(fullName);
+        admin.setEmail(email);
+        userRepository.save(admin);
+
+        return "redirect:/admin/profile?updated=true";
+    }
+
+    @GetMapping("/profile/change-password")
+    public String changePasswordForm(Model model, Principal principal) {
+        User admin = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        model.addAttribute("admin", admin);
+        return "admin/change-password";
+    }
+
+    @PostMapping("/profile/change-password")
+    public String changePassword(@RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 Principal principal,
+                                 Model model) {
+        User admin = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        model.addAttribute("admin", admin);
+
+        if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
+            model.addAttribute("pwError", "Current password is incorrect.");
+            return "admin/change-password";
+        }
+        if (newPassword.length() < 6) {
+            model.addAttribute("pwError", "New password must be at least 6 characters.");
+            return "admin/change-password";
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("pwError", "New password and confirmation do not match.");
+            return "admin/change-password";
+        }
+        if (passwordEncoder.matches(newPassword, admin.getPassword())) {
+            model.addAttribute("pwError", "New password must be different from the current password.");
+            return "admin/change-password";
+        }
+
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(admin);
+
+        return "redirect:/admin/profile?pwChanged=true";
     }
 
     @GetMapping("/users")
