@@ -4,9 +4,9 @@ import com.example.RentalManagementSystem.dto.AuthResponse;
 import com.example.RentalManagementSystem.dto.LoginRequest;
 import com.example.RentalManagementSystem.dto.RegisterRequest;
 import com.example.RentalManagementSystem.entity.User;
+import com.example.RentalManagementSystem.enums.AccountStatus;
 import com.example.RentalManagementSystem.enums.Role;
-import com.example.RentalManagementSystem.exception.BadRequestException;
-import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
+import com.example.RentalManagementSystem.enums.VerificationStatus;
 import com.example.RentalManagementSystem.repository.UserRepository;
 import com.example.RentalManagementSystem.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -35,29 +35,45 @@ public class AuthService {
             throw new IllegalStateException("A user with this email already exists");
         }
 
+        // Server-side role resolution — never trust a raw "role" field from the client.
+        // Only "LANDLORD" maps to landlord; everything else (including tampering) defaults to USER.
+        Role resolvedRole = "LANDLORD".equalsIgnoreCase(request.getAccountType()) ? Role.LANDLORD : Role.USER;
+
         String token = UUID.randomUUID().toString();
 
-        User user = User.builder()
+        User.UserBuilder builder = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole() != null ? request.getRole() : Role.LANDLORD)
-                .emailVerified(false)
-                .verificationToken(token)
-                .verificationTokenExpiry(LocalDateTime.now().plusHours(24))
-                .build();
+                .role(resolvedRole)
+                .accountStatus(AccountStatus.ACTIVE);
 
+        if (resolvedRole == Role.LANDLORD) {
+            builder.emailVerified(false)
+                    .verificationStatus(VerificationStatus.PENDING)
+                    .verificationToken(token)
+                    .verificationTokenExpiry(LocalDateTime.now().plusHours(24));
+        } else {
+            // USER accounts: no verification gate, can log in immediately
+            builder.emailVerified(true)
+                    .verificationStatus(VerificationStatus.VERIFIED);
+        }
+
+        User user = builder.build();
         userRepository.save(user);
-        emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), token);
+
+        if (resolvedRole == Role.LANDLORD) {
+            emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), token);
+        }
     }
 
     @Transactional
     public void verifyEmail(String token) {
         User user = userRepository.findByVerificationToken(token)
-                .orElseThrow(() -> new BadRequestException("Invalid or expired verification link"));
+                .orElseThrow(() -> new com.example.RentalManagementSystem.exception.BadRequestException("Invalid or expired verification link"));
 
-        if (user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Verification link has expired. Please register again.");
+        if (user.getVerificationTokenExpiry() != null && user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new com.example.RentalManagementSystem.exception.BadRequestException("Verification link has expired. Please register again.");
         }
 
         user.setEmailVerified(true);
@@ -71,7 +87,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new com.example.RentalManagementSystem.exception.ResourceNotFoundException("User not found"));
 
         String token = jwtService.generateToken(toUserDetails(user));
 
