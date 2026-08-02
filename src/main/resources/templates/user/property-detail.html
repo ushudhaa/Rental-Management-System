@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${property.title})}"></head>
+<body class="admin-shell">
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-section">MAIN MENU</div>
+  <a href="/user/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
+  <a href="/user/properties" class="sidebar-link active"><span class="sidebar-icon">B</span> Browse Properties</a>
+  <div class="sidebar-section">ACCOUNT</div>
+  <a href="/user/profile" class="sidebar-link"><span class="sidebar-icon">P</span> Profile</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+  </form>
+</aside>
+
+<div class="admin-main">
+  <header class="admin-topbar"><h1 th:text="${property.title}"></h1></header>
+  <div class="admin-content">
+    <a href="/user/properties" class="btn-back">&larr; Back to Browse Properties</a>
+
+    <div class="profile-card" style="max-width:700px; margin-top:16px;">
+      <div class="property-img-placeholder" style="height:220px; margin-bottom:20px;">Property Image</div>
+      <p><strong>Location:</strong> <span th:text="${property.city}"></span></p>
+      <p><strong>Address:</strong> <span th:text="${property.address}"></span></p>
+      <p><strong>Monthly Rent:</strong> <span th:text="'NPR ' + ${property.rentAmount}"></span></p>
+      <p><strong>Bedrooms:</strong> <span th:text="${property.bedrooms}"></span></p>
+      <p><strong>Bathrooms:</strong> <span th:text="${property.bathrooms}"></span></p>
+      <p th:if="${property.description}"><strong>Description:</strong> <span th:text="${property.description}"></span></p>
+      <p><strong>Status:</strong> <span class="badge badge-paid">AVAILABLE</span></p>
+      <p th:if="${property.owner != null}"><strong>Landlord:</strong> <span th:text="${property.owner.fullName}"></span></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
