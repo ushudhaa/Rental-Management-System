@@ -1,6 +1,5 @@
 package com.example.RentalManagementSystem.dto;
 
-import com.example.RentalManagementSystem.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,5 +21,5 @@ public class RegisterRequest {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    private Role role;
+    private String accountType; // "USER" or "LANDLORD" — validated server-side, never trusted as-is
 }
