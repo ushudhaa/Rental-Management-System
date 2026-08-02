@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Browse Properties')}"></head>
+<body class="admin-shell">
+<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
+<aside class="admin-sidebar">
+    <div class="sidebar-brand">RMS</div>
+    <div class="sidebar-section">MAIN MENU</div>
+    <a href="/user/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
+    <a href="/user/properties" class="sidebar-link active"><span class="sidebar-icon">B</span> Browse Properties</a>
+    <div class="sidebar-section">ACCOUNT</div>
+    <a href="/user/profile" class="sidebar-link"><span class="sidebar-icon">P</span> Profile</a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
+    </form>
+</aside>
+
+<div class="admin-main">
+    <header class="admin-topbar"><h1>Browse Properties</h1></header>
+    <div class="admin-content">
+        <p class="page-subtitle">Explore available rental properties and find a suitable place.</p>
+
+        <form method="get" th:action="@{/user/properties}" class="filter-bar" style="flex-wrap:wrap;">
+            <input type="text" name="search" placeholder="Search by property name or location..." th:value="${search}" style="flex:2; min-width:220px;">
+
+            <select name="city">
+                <option value="">All Locations</option>
+                <option th:each="c : ${cities}" th:value="${c}" th:text="${c}" th:selected="${c == city}"></option>
+            </select>
+
+            <input type="number" name="minRent" placeholder="Min rent" th:value="${minRent}" style="width:110px;">
+            <input type="number" name="maxRent" placeholder="Max rent" th:value="${maxRent}" style="width:110px;">
+
+            <select name="bedrooms">
+                <option value="">Any Bedrooms</option>
+                <option th:each="n : ${#numbers.sequence(1,5)}" th:value="${n}" th:text="${n}" th:selected="${n == bedrooms}"></option>
+            </select>
+
+            <select name="sort">
+                <option value="newest" th:selected="${sort == 'newest'}">Newest First</option>
+                <option value="rent_low" th:selected="${sort == 'rent_low'}">Lowest Rent</option>
+                <option value="rent_high" th:selected="${sort == 'rent_high'}">Highest Rent</option>
+                <option value="name_asc" th:selected="${sort == 'name_asc'}">Property Name A-Z</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            <a href="/user/properties" class="btn btn-secondary btn-sm">Reset Filters</a>
+        </form>
+
+        <div th:if="${properties.isEmpty()}" class="empty-state"><p>No properties match your search.</p></div>
+
+        <div class="property-grid" th:unless="${properties.isEmpty()}">
+            <div class="property-card" th:each="p : ${properties}">
+                <div class="property-img-placeholder">Property</div>
+                <div class="property-card-body">
+                    <div class="property-card-title" th:text="${p.title}"></div>
+                    <div class="property-card-loc" th:text="${p.city}"></div>
+                    <div class="property-card-rent" th:text="'NPR ' + ${p.rentAmount} + ' per month'"></div>
+                    <div class="property-card-meta" th:text="${p.bedrooms} + ' Bedrooms, ' + ${p.bathrooms} + ' Bathrooms'"></div>
+                    <span class="badge badge-paid">AVAILABLE</span>
+                    <a th:href="@{/user/properties/{id}(id=${p.id})}" class="btn btn-sm btn-primary" style="margin-top:10px; display:inline-block;">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
