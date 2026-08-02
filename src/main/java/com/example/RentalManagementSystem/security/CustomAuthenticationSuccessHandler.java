@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -17,11 +18,19 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        boolean isAdmin = authentication.getAuthorities().stream()
+        Set<String> authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+                .collect(java.util.stream.Collectors.toSet());
 
-        String redirectUrl = isAdmin ? "/admin/dashboard" : "/landlord/dashboard";
+        String redirectUrl;
+        if (authorities.contains("ROLE_ADMIN")) {
+            redirectUrl = "/admin/dashboard";
+        } else if (authorities.contains("ROLE_LANDLORD")) {
+            redirectUrl = "/landlord/dashboard";
+        } else {
+            redirectUrl = "/user/dashboard";
+        }
+
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
