@@ -38,6 +38,24 @@
             <label>Password</label>
             <input type="password" th:field="*{password}" required minlength="6">
 
+            <label>What would you like to do?</label>
+            <div class="account-type-choices">
+                <label class="account-type-option">
+                    <input type="radio" name="accountType" value="USER" checked>
+                    <div>
+                        <strong>Find a rental property</strong>
+                        <p>Browse available rental properties and find a suitable place.</p>
+                    </div>
+                </label>
+                <label class="account-type-option">
+                    <input type="radio" name="accountType" value="LANDLORD">
+                    <div>
+                        <strong>List and manage properties</strong>
+                        <p>Add and manage your rental properties.</p>
+                    </div>
+                </label>
+            </div>
+
             <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">Create Account</button>
         </form>
     </div>
