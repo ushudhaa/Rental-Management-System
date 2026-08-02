@@ -5,6 +5,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Set;
+
 @Controller
 public class HomeController {
 
@@ -13,11 +15,13 @@ public class HomeController {
         if (authentication != null && authentication.isAuthenticated()
                 && !authentication.getName().equals("anonymousUser")) {
 
-            boolean isAdmin = authentication.getAuthorities().stream()
+            Set<String> authorities = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
-                    .anyMatch(role -> role.equals("ROLE_ADMIN"));
+                    .collect(java.util.stream.Collectors.toSet());
 
-            return isAdmin ? "redirect:/admin/dashboard" : "redirect:/landlord/dashboard";
+            if (authorities.contains("ROLE_ADMIN")) return "redirect:/admin/dashboard";
+            if (authorities.contains("ROLE_LANDLORD")) return "redirect:/landlord/dashboard";
+            return "redirect:/user/dashboard";
         }
         return "redirect:/login";
     }
