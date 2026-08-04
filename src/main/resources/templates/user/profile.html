@@ -17,15 +17,20 @@
 <div class="admin-main">
     <header class="admin-topbar"><h1>Profile</h1></header>
     <div class="admin-content">
-        <div class="profile-wrap">
-            <p class="page-subtitle">Manage your account information and security settings.</p>
+        <div class="profile-wrap-narrow">
+
+            <div class="profile-header-block">
+                <h1>Profile</h1>
+                <p class="page-subtitle">Manage your account information and security settings.</p>
+            </div>
 
             <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
             <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
             <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
 
+            <!-- Profile overview -->
             <div class="profile-overview">
-                <div class="profile-avatar" th:text="${initials}"></div>
+                <div class="profile-avatar profile-avatar-lg" th:text="${initials}"></div>
                 <div class="profile-overview-info">
                     <div class="profile-name" th:text="${appUser.fullName}"></div>
                     <div class="profile-subtitle">User</div>
@@ -39,8 +44,10 @@
                 </div>
             </div>
 
+            <!-- Account information -->
             <div class="profile-card">
                 <h2>Account Information</h2>
+                <p class="card-subtitle">Your personal account details.</p>
                 <div class="info-grid">
                     <div>
                         <div class="info-label">Full Name</div>
@@ -55,24 +62,29 @@
                         <div class="info-value" th:text="${appUser.email}"></div>
                     </div>
                     <div>
+                        <div class="info-label">Account Status</div>
+                        <div class="info-value"><span class="badge badge-paid">ACTIVE</span></div>
+                    </div>
+                    <div>
                         <div class="info-label">Account Created</div>
                         <div class="info-value" th:text="${#temporals.format(appUser.createdAt, 'MMM dd, yyyy')}"></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Security -->
             <div class="profile-card">
                 <h2>Security</h2>
-                <div class="info-grid">
+                <p class="card-subtitle">Manage your password and keep your account secure.</p>
+                <div class="security-row">
                     <div>
-                        <div class="info-label">Password</div>
-                        <div class="info-value">********</div>
+                        <div class="security-row-title">Password</div>
+                        <div class="security-row-desc">Your password is securely protected.</div>
                     </div>
-                </div>
-                <div class="form-actions">
                     <a href="/user/profile/change-password" class="btn btn-secondary">Change Password</a>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

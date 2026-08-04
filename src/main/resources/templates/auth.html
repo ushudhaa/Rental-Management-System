@@ -3,9 +3,9 @@
 <head th:replace="~{layout :: head('Account')}"></head>
 <body>
 <main class="auth-wrapper">
-    <div class="auth-card">
+    <div class="auth-card auth-card-wide">
         <h1>RMS</h1>
-        <p class="subtitle">Manage your properties</p>
+        <p class="subtitle">Find or manage rental properties with ease.</p>
 
         <div class="auth-tabs">
             <button type="button" class="auth-tab active" id="tab-login" onclick="showTab('login')">Sign In</button>
@@ -22,41 +22,70 @@
             <input type="email" name="username" required>
 
             <label>Password</label>
-            <input type="password" name="password" required>
+            <div class="pw-input-wrap">
+                <input type="password" name="password" id="loginPassword" required>
+                <button type="button" class="pw-toggle" onclick="togglePw('loginPassword', this)">Show</button>
+            </div>
 
             <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">Sign In</button>
         </form>
 
         <!-- REGISTER FORM -->
-        <form id="form-register" th:action="@{/register}" th:object="${registerRequest}" method="post" style="display:none;">
-            <label>Full Name</label>
-            <input type="text" th:field="*{fullName}" required>
+        <form id="form-register" th:action="@{/register}" th:object="${registerRequest}" method="post"
+              style="display:none;" onsubmit="return onRegisterSubmit();">
 
-            <label>Email</label>
-            <input type="email" th:field="*{email}" required>
+            <label>Full Name</label>
+            <input type="text" th:field="*{fullName}" id="regFullName" placeholder="Enter your full name" required>
+            <div class="field-error" id="err-fullName"></div>
+
+            <label>Email Address</label>
+            <input type="email" th:field="*{email}" id="regEmail" placeholder="name@example.com" required>
+            <div class="field-error" id="err-email"></div>
 
             <label>Password</label>
-            <input type="password" th:field="*{password}" required minlength="6">
+            <div class="pw-input-wrap">
+                <input type="password" th:field="*{password}" id="regPassword" placeholder="Create a secure password" required minlength="8" oninput="checkStrength()">
+                <button type="button" class="pw-toggle" onclick="togglePw('regPassword', this)">Show</button>
+            </div>
+            <div class="pw-requirements">
+                <div class="pw-req-title">Password must contain:</div>
+                <div class="pw-req" id="req-length">&#9675; At least 8 characters</div>
+                <div class="pw-req" id="req-upper">&#9675; One uppercase letter</div>
+                <div class="pw-req" id="req-lower">&#9675; One lowercase letter</div>
+                <div class="pw-req" id="req-number">&#9675; One number</div>
+            </div>
+            <div class="field-error" id="err-password"></div>
+
+            <label>Confirm Password</label>
+            <div class="pw-input-wrap">
+                <input type="password" id="regConfirmPassword" placeholder="Re-enter your password" required minlength="8" oninput="checkMatch()">
+                <button type="button" class="pw-toggle" onclick="togglePw('regConfirmPassword', this)">Show</button>
+            </div>
+            <div class="field-error" id="err-confirm"></div>
 
             <label>What would you like to do?</label>
             <div class="account-type-choices">
-                <label class="account-type-option">
-                    <input type="radio" name="accountType" value="USER" checked>
+                <label class="account-type-option" id="opt-user">
+                    <input type="radio" name="accountType" value="USER" checked onchange="highlightRole()">
                     <div>
-                        <strong>Find a rental property</strong>
+                        <strong>Find a Rental Property</strong>
                         <p>Browse available rental properties and find a suitable place.</p>
                     </div>
                 </label>
-                <label class="account-type-option">
-                    <input type="radio" name="accountType" value="LANDLORD">
+                <label class="account-type-option" id="opt-landlord">
+                    <input type="radio" name="accountType" value="LANDLORD" onchange="highlightRole()">
                     <div>
-                        <strong>List and manage properties</strong>
-                        <p>Add and manage your rental properties.</p>
+                        <strong>List and Manage Properties</strong>
+                        <p>Add, manage, and monitor your rental properties.</p>
                     </div>
                 </label>
             </div>
+            <p class="role-note">You can update your account details later. Some role features may require approval.</p>
 
-            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">Create Account</button>
+            <button type="submit" class="btn btn-primary" id="regSubmitBtn" style="width:100%; margin-top:12px;">Create Account</button>
+
+            <p class="terms-text">By creating an account, you agree to the Terms of Service and Privacy Policy.</p>
+            <p class="auth-footer">Already have an account? <a href="#" onclick="showTab('login'); return false;">Sign In</a></p>
         </form>
     </div>
 </main>
@@ -72,6 +101,71 @@
     var initialTab = /*[[${activeTab}]]*/ 'login';
     /*]]>*/
     if (initialTab === 'register') showTab('register');
+
+    function togglePw(id, btn) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') { input.type = 'text'; btn.textContent = 'Hide'; }
+        else { input.type = 'password'; btn.textContent = 'Show'; }
+    }
+
+    function checkStrength() {
+        const val = document.getElementById('regPassword').value;
+        setReq('req-length', val.length >= 8, 'At least 8 characters');
+        setReq('req-upper', /[A-Z]/.test(val), 'One uppercase letter');
+        setReq('req-lower', /[a-z]/.test(val), 'One lowercase letter');
+        setReq('req-number', /[0-9]/.test(val), 'One number');
+    }
+    function setReq(id, passed, label) {
+        const el = document.getElementById(id);
+        el.innerHTML = (passed ? '&#10003; ' : '&#10007; ') + label;
+        el.className = 'pw-req ' + (passed ? 'pw-req-pass' : 'pw-req-fail');
+    }
+    function checkMatch() {
+        const pw = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirmPassword').value;
+        document.getElementById('err-confirm').textContent =
+            (confirm.length > 0 && pw !== confirm) ? 'Passwords do not match.' : '';
+    }
+    function highlightRole() {
+        document.getElementById('opt-user').classList.toggle('selected', document.querySelector('input[value="USER"]').checked);
+        document.getElementById('opt-landlord').classList.toggle('selected', document.querySelector('input[value="LANDLORD"]').checked);
+    }
+    highlightRole();
+
+    function onRegisterSubmit() {
+        ['err-fullName','err-email','err-password','err-confirm'].forEach(id => document.getElementById(id).textContent = '');
+
+        const fullName = document.getElementById('regFullName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const pw = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirmPassword').value;
+        let valid = true;
+
+        if (fullName.length < 2) {
+            document.getElementById('err-fullName').textContent = 'Please enter your full name.';
+            valid = false;
+        }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            document.getElementById('err-email').textContent = 'Enter a valid email address.';
+            valid = false;
+        }
+        if (pw.length < 8 || !/[A-Z]/.test(pw) || !/[a-z]/.test(pw) || !/[0-9]/.test(pw)) {
+            document.getElementById('err-password').textContent = 'Password must contain at least 8 characters, an uppercase letter, a lowercase letter, and a number.';
+            valid = false;
+        }
+        if (confirm !== pw) {
+            document.getElementById('err-confirm').textContent = 'Passwords do not match.';
+            valid = false;
+        }
+
+        if (valid) {
+            const btn = document.getElementById('regSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
+        }
+        return valid;
+    }
 </script>
 </body>
 </html>
