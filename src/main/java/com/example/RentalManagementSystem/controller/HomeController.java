@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -17,12 +18,12 @@ public class HomeController {
 
             Set<String> authorities = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
-                    .collect(java.util.stream.Collectors.toSet());
+                    .collect(Collectors.toSet());
 
             if (authorities.contains("ROLE_ADMIN")) return "redirect:/admin/dashboard";
             if (authorities.contains("ROLE_LANDLORD")) return "redirect:/landlord/dashboard";
             return "redirect:/user/dashboard";
         }
-        return "redirect:/login";
+        return "index";
     }
 }
