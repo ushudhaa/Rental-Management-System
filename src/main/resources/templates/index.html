@@ -1,31 +1,129 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head(title)">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title} + ' | Rental Management System'">RMS</title>
+    <title>RMS | Rental Property Management</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:fragment="nav" class="navbar">
-    <a href="/" class="brand">RMS</a>
-    <div class="nav-links">
-        <a href="/properties">Properties</a>
-        <a href="/payments">Payments</a>
-        <a href="/admin/users">Users</a>
-        <a href="/swagger-ui.html" target="_blank">API Docs</a>
-        <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
-            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
-        </form>
+
+<nav class="landing-nav">
+    <a href="/" class="landing-brand">
+        <span class="landing-brand-mark">RMS</span>
+    </a>
+    <div class="landing-nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+        <a href="/register" class="btn btn-primary btn-sm">Create Account</a>
     </div>
 </nav>
 
-<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
-    <span class="arrow">&larr;</span> Back
-</button>
+<header class="landing-hero">
+    <div class="landing-hero-text">
+        <span class="landing-eyebrow">Rental Property Management</span>
+        <h1>Manage rentals.<br>Find your next home.</h1>
+        <p>RMS brings landlords and renters onto one clean, reliable platform &mdash;
+            list properties, track payments, and browse available rentals, all in one place.</p>
+        <div class="landing-hero-actions">
+            <a href="/register" class="btn btn-primary">Get Started</a>
+            <a href="/login" class="btn btn-secondary">Sign In</a>
+        </div>
+        <div class="landing-hero-stats">
+            <div><strong>Simple</strong><span>Onboarding</span></div>
+            <div><strong>Secure</strong><span>Accounts</span></div>
+            <div><strong>Organized</strong><span>Records</span></div>
+        </div>
+    </div>
 
-<footer th:fragment="footer" class="site-footer">
-    Rental Management System &middot; Built with Spring Boot
+    <div class="landing-hero-visual">
+        <div class="mock-dashboard">
+            <div class="mock-dashboard-topbar">
+                <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+            </div>
+            <div class="mock-dashboard-body">
+                <div class="mock-sidebar">
+                    <div class="mock-sidebar-item active"></div>
+                    <div class="mock-sidebar-item"></div>
+                    <div class="mock-sidebar-item"></div>
+                    <div class="mock-sidebar-item"></div>
+                </div>
+                <div class="mock-content">
+                    <div class="mock-stat-row">
+                        <div class="mock-stat-card"></div>
+                        <div class="mock-stat-card"></div>
+                        <div class="mock-stat-card"></div>
+                    </div>
+                    <div class="mock-table-row" th:each="i : ${#numbers.sequence(1,4)}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="landing-section" id="features">
+    <div class="landing-section-header">
+        <span class="landing-eyebrow">Why RMS</span>
+        <h2>Everything you need to manage rentals</h2>
+    </div>
+    <div class="landing-feature-grid">
+        <div class="landing-feature-card">
+            <div class="landing-feature-icon">H</div>
+            <h3>Property Listings</h3>
+            <p>Landlords can list, edit, and track the status of every property from a single dashboard.</p>
+        </div>
+        <div class="landing-feature-card">
+            <div class="landing-feature-icon">$</div>
+            <h3>Payment Tracking</h3>
+            <p>Log payments, mark them as paid, and keep a clear record of rent history per property.</p>
+        </div>
+        <div class="landing-feature-card">
+            <div class="landing-feature-icon">S</div>
+            <h3>Property Search</h3>
+            <p>Renters can browse available listings and filter by location, rent, and bedrooms.</p>
+        </div>
+        <div class="landing-feature-card">
+            <div class="landing-feature-icon">A</div>
+            <h3>Verified Landlords</h3>
+            <p>Every landlord account is reviewed before their listings go live, keeping the platform trustworthy.</p>
+        </div>
+    </div>
+</section>
+
+<section class="landing-section landing-section-alt" id="how-it-works">
+    <div class="landing-section-header">
+        <span class="landing-eyebrow">How It Works</span>
+        <h2>Get started in minutes</h2>
+    </div>
+    <div class="landing-steps">
+        <div class="landing-step">
+            <div class="landing-step-num">1</div>
+            <h3>Create an account</h3>
+            <p>Sign up as a renter looking for a place, or a landlord ready to list properties.</p>
+        </div>
+        <div class="landing-step">
+            <div class="landing-step-num">2</div>
+            <h3>Set up your space</h3>
+            <p>Landlords add property details. Renters set up their profile and start browsing.</p>
+        </div>
+        <div class="landing-step">
+            <div class="landing-step-num">3</div>
+            <h3>Manage with ease</h3>
+            <p>Track payments, update listings, and manage everything from a clean dashboard.</p>
+        </div>
+    </div>
+</section>
+
+<section class="landing-cta">
+    <h2>Ready to get started?</h2>
+    <p>Join RMS today and simplify how you manage or find rental properties.</p>
+    <a href="/register" class="btn btn-primary">Create Your Account</a>
+</section>
+
+<footer class="landing-footer">
+    <span>RMS &middot; Rental Management System</span>
 </footer>
+
 </body>
 </html>
