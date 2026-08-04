@@ -18,8 +18,10 @@
 <div class="admin-main">
   <header class="admin-topbar"><h1>Dashboard</h1></header>
   <div class="admin-content">
-    <p class="page-subtitle">Welcome back. Find a rental property that suits your needs.</p>
-
+    <div class="dashboard-hero">
+      <h1>Dashboard</h1>
+      <p th:text="'Welcome back, ' + ${#authentication.name} + '. Find a property that suits your needs.'"></p>
+    </div>
     <div class="page-header"><h2 style="font-size:1.1rem;">Available Properties</h2></div>
     <div class="stat-grid" style="grid-template-columns: repeat(1, 220px);">
       <div class="stat-card">
