@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head('Profile')}"></head>
 <body class="admin-shell">
+<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
 <aside class="admin-sidebar">
     <div class="sidebar-brand">RMS</div>
     <div class="sidebar-section">MAIN MENU</div>
@@ -27,10 +28,22 @@
             <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
             <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
             <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
+            <div id="photoAlert"></div>
 
             <!-- Profile overview -->
             <div class="profile-overview">
-                <div class="profile-avatar profile-avatar-lg" th:text="${initials}"></div>
+                <div class="photo-block">
+                    <div class="photo-circle" id="photoCircle">
+                        <img th:if="${appUser.profileImageUrl != null}" th:src="${appUser.profileImageUrl}" id="photoImg" alt="Profile photo">
+                        <span th:unless="${appUser.profileImageUrl != null}" id="photoInitials" th:text="${initials}"></span>
+                    </div>
+                    <div class="photo-actions">
+                        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="onPhotoSelected(event)">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('photoInput').click()">Change Photo</button>
+                        <button type="button" class="btn btn-sm btn-danger" id="removePhotoBtn"
+                                th:style="${appUser.profileImageUrl != null} ? '' : 'display:none;'" onclick="removePhoto()">Remove Photo</button>
+                    </div>
+                </div>
                 <div class="profile-overview-info">
                     <div class="profile-name" th:text="${appUser.fullName}"></div>
                     <div class="profile-subtitle">User</div>
@@ -104,5 +117,69 @@
         </form>
     </div>
 </div>
+
+<script>
+    function showPhotoAlert(msg, type) {
+        document.getElementById('photoAlert').innerHTML =
+            '<div class="alert alert-' + type + '">' + msg + '</div>';
+    }
+
+    function onPhotoSelected(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowed.includes(file.type)) {
+            showPhotoAlert('Please select a JPEG, PNG, or WEBP image.', 'error');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            showPhotoAlert('Image must be smaller than 5 MB.', 'error');
+            return;
+        }
+
+        // instant preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            renderPhoto(e.target.result, true);
+        };
+        reader.readAsDataURL(file);
+
+        // upload
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/profile/photo', { method: 'POST', body: formData })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw err; });
+                return res.json();
+            })
+            .then(data => {
+                renderPhoto(data.profileImageUrl, false);
+                document.getElementById('removePhotoBtn').style.display = 'inline-flex';
+                showPhotoAlert('Profile photo updated successfully.', 'success');
+            })
+            .catch(err => {
+                showPhotoAlert(err.message || 'Unable to upload photo. Please try again.', 'error');
+            });
+    }
+
+    function removePhoto() {
+        fetch('/api/profile/photo', { method: 'DELETE' })
+            .then(res => res.json())
+            .then(() => {
+                const circle = document.getElementById('photoCircle');
+                circle.innerHTML = '<span id="photoInitials">' + /*[[${initials}]]*/ '?' + '</span>';
+                document.getElementById('removePhotoBtn').style.display = 'none';
+                showPhotoAlert('Profile photo removed.', 'success');
+            })
+            .catch(() => showPhotoAlert('Unable to remove photo. Please try again.', 'error'));
+    }
+
+    function renderPhoto(src, isDataUrl) {
+        const circle = document.getElementById('photoCircle');
+        circle.innerHTML = '<img src="' + src + '" alt="Profile photo">';
+    }
+</script>
 </body>
 </html>

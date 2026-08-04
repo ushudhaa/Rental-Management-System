@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/properties/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -59,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**", "/swagger-ui.html", "/swagger-ui/**").hasRole("ADMIN")
                         .requestMatchers("/landlord/**").hasRole("LANDLORD")
                         .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/api/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
