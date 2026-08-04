@@ -619,3 +619,10 @@ body {
     .security-row { flex-direction: column; align-items: flex-start; gap: 12px; }
     .security-row .btn { width: 100%; }
 }
+.auth-card-wide { max-width: 470px; }
+.auth-card-wide h1 { font-size: 1.8rem; }
+
+.role-note { font-size: 0.78rem; color: var(--grey-500); margin: 8px 0 4px; }
+.terms-text { font-size: 0.76rem; color: var(--grey-400); text-align: center; margin-top: 16px; line-height: 1.5; }
+
+.account-type-option.selected { border-color: var(--olive-500); background: var(--olive-50); }
