@@ -50,6 +50,7 @@ public class User {
     private boolean emailVerified = false;
 
     private String verificationToken;
+    private String profileImageUrl;
 
     private LocalDateTime verificationTokenExpiry;
 
