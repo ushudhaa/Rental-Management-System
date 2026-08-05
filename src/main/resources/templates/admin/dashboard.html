@@ -31,7 +31,19 @@
     <header class="admin-topbar">
         <h1>Dashboard</h1>
         <div class="admin-topbar-right">
-            <span class="notif-bell">N<span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span></span>
+            <div class="notif-wrapper">
+                <button type="button" class="notif-bell" id="notifTrigger" onclick="toggleNotif()">
+                    N
+                    <span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span>
+                </button>
+                <div id="notifDropdown" class="notif-dropdown">
+                    <div class="notif-header">Notifications</div>
+                    <a th:if="${pendingCount > 0}" th:href="@{/admin/users(status='PENDING')}" class="notif-item">
+                        <span th:text="${pendingCount} + ' landlord(s) waiting for verification'"></span>
+                    </a>
+                    <div th:if="${pendingCount == 0}" class="notif-item notif-empty">No new notifications</div>
+                </div>
+            </div>
             <span class="admin-name" sec:authentication="name"></span>
         </div>
     </header>
@@ -71,23 +83,25 @@
             <h2 style="font-size:1.1rem;">Recent Users</h2>
             <a href="/admin/users" class="btn btn-sm btn-secondary">View All Users</a>
         </div>
-        <table class="data-table">
-            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th></th></tr></thead>
-            <tbody>
-            <tr th:each="u : ${recentUsers}">
-                <td th:text="${u.fullName}"></td>
-                <td th:text="${u.email}"></td>
-                <td th:text="${u.role}"></td>
-                <td>
-                    <span class="badge"
-                          th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
-                          th:text="${u.verificationStatus}"></span>
-                </td>
-                <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
-                <td><a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View Details</a></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Verification</th><th>Registered</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="u : ${recentUsers}">
+                    <td th:text="${u.fullName}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.role}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${u.verificationStatus.name() == 'VERIFIED'} ? 'badge-paid' : (${u.verificationStatus.name() == 'REJECTED'} ? 'badge-failed' : 'badge-pending')"
+                              th:text="${u.verificationStatus}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}"></td>
+                    <td><a th:href="@{/admin/users/{id}(id=${u.id})}" class="btn btn-sm btn-secondary">View Details</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="page-header" style="margin-top:32px;"><h2 style="font-size:1.1rem;">Recent Activity</h2></div>
         <div class="activity-list">
@@ -102,5 +116,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleNotif() {
+        document.getElementById('notifDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('notifDropdown');
+        const trigger = document.getElementById('notifTrigger');
+        if (menu && !menu.contains(e.target) && trigger && !trigger.contains(e.target)) {
+            menu.classList.remove('open');
+        }
+    });
+</script>
 </body>
 </html>
