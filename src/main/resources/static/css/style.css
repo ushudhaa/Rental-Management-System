@@ -433,9 +433,10 @@ body {
 .badge-landlord { background: var(--info-bg); color: var(--info); }
 .notif-wrapper { position: relative; }
 .notif-bell {
-    background: none; border: none; color: var(--grey-300); font-size: 1.1rem;
-    cursor: pointer; position: relative; padding: 6px;
+    background: none; border: none; color: var(--grey-300); font-size: 0.9rem;
+    cursor: pointer; position: relative; padding: 6px 8px; font-weight: 700;
 }
+.notif-bell:hover { color: #fff; }
 .notif-bell:hover { color: #fff; }
 .notif-badge {
     position: absolute; top: 0; right: 0; background: var(--danger);
