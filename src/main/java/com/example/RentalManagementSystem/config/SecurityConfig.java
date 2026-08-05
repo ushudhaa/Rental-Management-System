@@ -41,7 +41,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/properties/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -57,8 +56,8 @@ public class SecurityConfig {
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/admin/**", "/swagger-ui.html", "/swagger-ui/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/uploads/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/landlord/**").hasRole("LANDLORD")
                         .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/api/profile/**").authenticated()

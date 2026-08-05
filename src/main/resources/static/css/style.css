@@ -1,3 +1,21 @@
+:root {
+    --primary-color: #66713d;
+    --primary-hover: #556032;
+    --sidebar-color: #20201d;
+    --sidebar-hover: #303129;
+    --page-background: #f5f6f3;
+    --surface-color: #ffffff;
+    --border-color-v2: #e1e4dc;
+    --text-color: #252a23;
+    --muted-text: #6d7469;
+    --success-v2: #4f7a52;
+    --warning-v2: #9a742d;
+    --danger-v2: #a84a4a;
+    --border-radius-v2: 12px;
+    --small-radius: 8px;
+    --shadow-v2: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
 /* ===== Design tokens ===== */
 :root {
     --olive-50:  #f4f6ee;
