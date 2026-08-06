@@ -4,6 +4,8 @@ import com.example.RentalManagementSystem.dto.PaymentRequest;
 import com.example.RentalManagementSystem.dto.PaymentResponse;
 import com.example.RentalManagementSystem.entity.Payment;
 import com.example.RentalManagementSystem.entity.Property;
+import com.example.RentalManagementSystem.entity.User;
+import com.example.RentalManagementSystem.enums.NotificationType;
 import com.example.RentalManagementSystem.enums.PaymentStatus;
 import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
 import com.example.RentalManagementSystem.repository.PaymentRepository;
@@ -22,6 +24,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PropertyRepository propertyRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public PaymentResponse create(PaymentRequest request) {
@@ -83,7 +86,17 @@ public class PaymentService {
         Payment payment = findEntity(id);
         payment.setStatus(PaymentStatus.PAID);
         payment.setPaymentDate(LocalDate.now());
-        return toResponse(paymentRepository.save(payment));
+        Payment saved = paymentRepository.save(payment);
+
+        User owner = saved.getProperty().getOwner();
+        if (owner != null) {
+            notificationService.notifyUser(owner, "Payment received",
+                    "Payment of " + saved.getAmount() + " for \"" + saved.getProperty().getTitle()
+                            + "\" from " + saved.getTenantName() + " has been marked as paid.",
+                    "/landlord/payments", NotificationType.PAYMENT_RECEIVED);
+        }
+
+        return toResponse(saved);
     }
 
     @Transactional

@@ -2,14 +2,16 @@ package com.example.RentalManagementSystem.controller;
 
 import com.example.RentalManagementSystem.entity.User;
 import com.example.RentalManagementSystem.enums.AccountStatus;
+import com.example.RentalManagementSystem.enums.NotificationType;
 import com.example.RentalManagementSystem.enums.Role;
 import com.example.RentalManagementSystem.enums.VerificationStatus;
 import com.example.RentalManagementSystem.exception.ResourceNotFoundException;
 import com.example.RentalManagementSystem.repository.UserRepository;
+import com.example.RentalManagementSystem.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+    import org.springframework.stereotype.Controller;
+    import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -24,6 +26,7 @@ public class AdminViewController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -123,6 +126,9 @@ public class AdminViewController {
         user.setVerificationStatus(VerificationStatus.VERIFIED);
         user.setRejectionReason(null);
         userRepository.save(user);
+        notificationService.notifyUser(user, "Account verified",
+                "Your landlord account has been verified. You can now list properties.",
+                "/landlord/dashboard", NotificationType.LANDLORD_VERIFIED);
         return "redirect:/admin/users/" + id + "?verified=true";
     }
 
@@ -132,6 +138,11 @@ public class AdminViewController {
         user.setVerificationStatus(VerificationStatus.REJECTED);
         user.setRejectionReason(reason);
         userRepository.save(user);
+        notificationService.notifyUser(user, "Account verification rejected",
+                (reason != null && !reason.isBlank())
+                        ? "Your landlord verification was rejected. Reason: " + reason
+                        : "Your landlord verification was rejected.",
+                "/landlord/profile", NotificationType.LANDLORD_REJECTED);
         return "redirect:/admin/users/" + id + "?rejected=true";
     }
 
