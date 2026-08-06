@@ -43,6 +43,13 @@
                         <button type="button" class="btn btn-sm btn-danger" id="removePhotoBtn"
                                 th:style="${appUser.profileImageUrl != null} ? '' : 'display:none;'" onclick="removePhoto()">Remove Photo</button>
                     </div>
+                    <form th:action="@{/user/profile/photo}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="profilePhoto" class="form-label">Select Profile Image</label>
+                            <input type="file" id="profilePhoto" name="file" class="form-control" accept="image/*" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Photo</button>
+                    </form>
                 </div>
                 <div class="profile-overview-info">
                     <div class="profile-name" th:text="${appUser.fullName}"></div>
