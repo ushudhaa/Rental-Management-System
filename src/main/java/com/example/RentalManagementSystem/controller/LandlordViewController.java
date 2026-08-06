@@ -55,8 +55,21 @@ public class LandlordViewController {
     public String profile(Model model, Principal principal) {
         User landlord = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        model.addAttribute("landlord", landlord);
+
+        String email = landlord.getEmail();
+        long total = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getTotalElements();
+        long available = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
+                .stream().filter(p -> p.getStatus() == PropertyStatus.AVAILABLE).count();
+        long occupied = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
+                .stream().filter(p -> p.getStatus() == PropertyStatus.RENTED).count();
+
+        model.addAttribute("appUser", landlord);
         model.addAttribute("initials", getInitials(landlord.getFullName()));
+        model.addAttribute("totalProperties", total);
+        model.addAttribute("availableProperties", available);
+        model.addAttribute("occupiedProperties", occupied);
+        model.addAttribute("totalPayments", paymentRepository.count());
+
         return "landlord/profile";
     }
 
