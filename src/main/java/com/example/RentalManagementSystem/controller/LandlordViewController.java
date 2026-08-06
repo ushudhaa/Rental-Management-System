@@ -30,12 +30,17 @@ public class LandlordViewController {
     public String dashboard(Authentication authentication, Model model) {
         String email = authentication.getName();
 
+        User landlord = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         long total = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getTotalElements();
         long available = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
                 .stream().filter(p -> p.getStatus() == PropertyStatus.AVAILABLE).count();
         long occupied = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
                 .stream().filter(p -> p.getStatus() == PropertyStatus.RENTED).count();
 
+        model.addAttribute("appUser", landlord);
+        model.addAttribute("initials", getInitials(landlord.getFullName()));
         model.addAttribute("totalProperties", total);
         model.addAttribute("availableProperties", available);
         model.addAttribute("occupiedProperties", occupied);
