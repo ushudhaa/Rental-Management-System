@@ -1,30 +1,37 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head(title)">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title} + ' | Rental Management System'">RMS</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<nav th:fragment="nav" class="navbar">
-    <a href="/" class="brand">RMS</a>
-    <div class="nav-links">
-        <a href="/properties">Properties</a>
-        <a href="/payments">Payments</a>
-        <a href="/swagger-ui.html" target="_blank">API Docs</a>
-        <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
-            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
-        </form>
+<div th:fragment="adminTopbar(pageTitle, breadcrumb)" class="topbar-v2">
+    <div class="topbar-left">
+        <button type="button" class="sidebar-toggle-v2" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">&#9776;</button>
+        <div>
+            <div class="breadcrumb" th:if="${breadcrumb}" th:utext="${breadcrumb}"></div>
+            <h1 th:text="${pageTitle}"></h1>
+        </div>
     </div>
-</nav>
-
-<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
-    <span class="arrow">&larr;</span> Back
-</button>
-
-<footer th:fragment="footer" class="site-footer">
-    Rental Management System &middot; Built with Spring Boot
-</footer>
-</body>
-</html>
+    <div class="topbar-right-v2">
+        <div class="notif-wrapper">
+            <button type="button" class="notif-bell-v2" id="notifTrigger" onclick="toggleNotif()">
+                &#128276;
+                <span class="notif-badge" id="notifCount">2</span>
+            </button>
+            <div id="notifDropdown" class="notif-dropdown">
+                <div class="notif-header">Notifications</div>
+                <div class="notif-item notif-empty">No new notifications</div>
+            </div>
+        </div>
+        <div class="topbar-user-v2" id="userMenuTrigger" onclick="toggleUserMenu()">
+            <div class="topbar-avatar-v2" th:text="${initials}"></div>
+            <div class="topbar-user-text">
+                <div class="topbar-user-name" th:text="${appUser != null ? appUser.fullName : ''}"></div>
+                <div class="topbar-user-role" th:text="${appUser != null ? appUser.role : ''}"></div>
+            </div>
+            <span class="topbar-caret">&#9662;</span>
+        </div>
+        <div class="topbar-dropdown" id="userDropdown">
+            <a href="/landlord/profile">Profile</a>
+            <a href="/landlord/profile/change-password">Change Password</a>
+            <hr>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
