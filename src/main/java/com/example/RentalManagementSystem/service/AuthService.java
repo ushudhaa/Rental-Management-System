@@ -20,11 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-private final NotificationService notificationService;,
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,7 +29,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
-
+    private final NotificationService notificationService;
 
     @Transactional
     public void register(RegisterRequest request) {
@@ -71,14 +66,14 @@ public class AuthService {
 
         if (resolvedRole == Role.LANDLORD) {
             emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), token);
+            notificationService.notifyRole(
+                    Role.ADMIN,
+                    "New landlord registration",
+                    user.getFullName() + " (" + user.getEmail() + ") registered as a landlord and is awaiting verification.",
+                    "/admin/users/" + user.getId(),
+                    NotificationType.LANDLORD_REGISTERED
+            );
         }
-        notificationService.notifyRole(
-                Role.ADMIN,
-                "New landlord registration",
-                user.getFullName() + " (" + user.getEmail() + ") registered as a landlord and is awaiting verification.",
-                "/admin/users/" + user.getId(),
-                NotificationType.LANDLORD_REGISTERED
-        );
     }
 
     @Transactional

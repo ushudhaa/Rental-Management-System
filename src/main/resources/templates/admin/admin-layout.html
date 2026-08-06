@@ -31,8 +31,7 @@
     <header class="admin-topbar">
       <h1 th:text="${pageTitle}"></h1>
       <div class="admin-topbar-right">
-        <span class="notif-bell">Notification</span>
-        <span class="admin-name" sec:authentication="name"></span>
+        <div th:replace="~{fragments/notifications :: bell}"></div>        <span class="admin-name" sec:authentication="name"></span>
         <form th:action="@{/logout}" method="post" style="display:inline;">
           <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
         </form>

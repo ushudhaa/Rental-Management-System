@@ -31,19 +31,7 @@
     <header class="admin-topbar">
         <h1>Dashboard</h1>
         <div class="admin-topbar-right">
-            <div class="notif-wrapper">
-                <button type="button" class="notif-bell" id="notifTrigger" onclick="toggleNotif()">
-                    N
-                    <span class="notif-badge" th:if="${pendingCount > 0}" th:text="${pendingCount}"></span>
-                </button>
-                <div id="notifDropdown" class="notif-dropdown">
-                    <div class="notif-header">Notifications</div>
-                    <a th:if="${pendingCount > 0}" th:href="@{/admin/users(status='PENDING')}" class="notif-item">
-                        <span th:text="${pendingCount} + ' landlord(s) waiting for verification'"></span>
-                    </a>
-                    <div th:if="${pendingCount == 0}" class="notif-item notif-empty">No new notifications</div>
-                </div>
-            </div>
+            <div th:replace="~{fragments/notifications :: bell}"></div>
             <span class="admin-name" sec:authentication="name"></span>
         </div>
     </header>

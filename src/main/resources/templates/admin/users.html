@@ -31,8 +31,7 @@
     <header class="admin-topbar">
         <h1>Users</h1>
         <div class="admin-topbar-right">
-            <span class="notif-bell">N</span>
-            <span class="admin-name" sec:authentication="name"></span>
+            <div th:replace="~{fragments/notifications :: bell}"></div>            <span class="admin-name" sec:authentication="name"></span>
         </div>
     </header>
 

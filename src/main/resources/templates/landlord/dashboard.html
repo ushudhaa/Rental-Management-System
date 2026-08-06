@@ -17,8 +17,12 @@
 </aside>
 
 <div class="admin-main">
-    <header class="admin-topbar"><h1>Dashboard</h1></header>
-    <div class="admin-content">
+    <header class="admin-topbar">
+        <h1>Dashboard</h1>
+        <div class="admin-topbar-right">
+            <div th:replace="~{fragments/notifications :: bell}"></div>
+        </div>
+    </header>    <div class="admin-content">
         <p class="page-subtitle">Welcome back. Here is an overview of your rental properties.</p>
 
         <div class="stat-grid">
