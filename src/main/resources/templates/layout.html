@@ -1,3 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' | Rental Management System'">RMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:fragment="nav" class="navbar">
+    <a href="/" class="brand">RMS</a>
+    <div class="nav-links">
+        <a href="/properties">Properties</a>
+        <a href="/payments">Payments</a>
+        <a href="/swagger-ui.html" target="_blank">API Docs</a>
+        <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
+            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+        </form>
+    </div>
+</nav>
 <div th:fragment="adminTopbar(pageTitle, breadcrumb)" class="topbar-v2">
     <div class="topbar-left">
         <button type="button" class="sidebar-toggle-v2" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">&#9776;</button>
@@ -35,3 +55,12 @@
         </div>
     </div>
 </div>
+<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
+    <span class="arrow">&larr;</span> Back
+</button>
+
+<footer th:fragment="footer" class="site-footer">
+    Rental Management System &middot; Built with Spring Boot
+</footer>
+</body>
+</html>

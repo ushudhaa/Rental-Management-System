@@ -2,9 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head('Dashboard')}"></head>
 <body class="admin-shell">
-<button type="button" class="sidebar-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">Menu</button>
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 <aside class="admin-sidebar">
-    <div class="sidebar-brand">RMS</div>
+    <div class="sidebar-brand-v2">
+        <span class="sidebar-brand-icon">&#8962;</span>
+        <div>
+            <div class="sidebar-brand-title">RMS</div>
+            <div class="sidebar-brand-sub">Rental Management System</div>
+        </div>
+    </div>
     <div class="sidebar-section">MAIN MENU</div>
     <a href="/landlord/dashboard" class="sidebar-link active"><span class="sidebar-icon">D</span> Dashboard</a>
     <a href="/landlord/properties" class="sidebar-link"><span class="sidebar-icon">H</span> My Properties</a>
@@ -14,61 +20,149 @@
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
     </form>
+    <div class="sidebar-help">
+        <div class="sidebar-help-title">Need Help?</div>
+        <div class="sidebar-help-sub">We're here to help you</div>
+        <a href="#" class="sidebar-help-link">Contact Support &rarr;</a>
+    </div>
 </aside>
 
 <div class="admin-main">
-    <header class="admin-topbar">
-        <h1>Dashboard</h1>
-        <div class="admin-topbar-right">
-            <div th:replace="~{fragments/notifications :: bell}"></div>
-        </div>
-    </header>    <div class="admin-content">
-        <p class="page-subtitle">Welcome back. Here is an overview of your rental properties.</p>
+    <div th:replace="~{layout :: adminTopbar('Dashboard', null)}"></div>
 
-        <div class="stat-grid">
-            <div class="stat-card">
+    <div class="admin-content">
+        <p class="dashboard-welcome">Welcome back, <strong th:text="${appUser != null ? appUser.fullName : ''}"></strong>. Here is an overview of your rental properties.</p>
+
+        <div class="stat-grid-v2">
+            <div class="stat-card-v2">
+                <div class="stat-icon-v2 stat-icon-green">H</div>
                 <div class="stat-value" th:text="${totalProperties}"></div>
                 <div class="stat-title">Total Properties</div>
-                <div class="stat-desc">Properties you currently manage</div>
+                <div class="stat-desc">Properties you manage</div>
+                <a href="/landlord/properties" class="stat-link">View all &rarr;</a>
             </div>
-            <div class="stat-card">
+            <div class="stat-card-v2">
+                <div class="stat-icon-v2 stat-icon-green">A</div>
                 <div class="stat-value" th:text="${availableProperties}"></div>
                 <div class="stat-title">Available Properties</div>
                 <div class="stat-desc">Available for rent</div>
+                <a href="/landlord/properties" class="stat-link">View all &rarr;</a>
             </div>
-            <div class="stat-card">
+            <div class="stat-card-v2">
+                <div class="stat-icon-v2 stat-icon-green">O</div>
                 <div class="stat-value" th:text="${occupiedProperties}"></div>
                 <div class="stat-title">Occupied Properties</div>
                 <div class="stat-desc">Currently rented</div>
+                <a href="/landlord/properties" class="stat-link">View all &rarr;</a>
             </div>
-            <div class="stat-card">
+            <div class="stat-card-v2">
+                <div class="stat-icon-v2 stat-icon-green">$</div>
                 <div class="stat-value" th:text="${totalPayments}"></div>
                 <div class="stat-title">Total Payments</div>
                 <div class="stat-desc">Payments related to your properties</div>
+                <a href="/landlord/payments" class="stat-link">View all &rarr;</a>
             </div>
         </div>
 
         <div class="page-header"><h2 style="font-size:1.1rem;">Quick Actions</h2></div>
-        <div class="quick-actions">
-            <a href="/landlord/properties/new" class="btn btn-primary">Add New Property</a>
-            <a href="/landlord/properties" class="btn btn-secondary">View My Properties</a>
-            <a href="/landlord/payments" class="btn btn-secondary">View My Payments</a>
+        <div class="quick-actions-v2">
+            <a href="/landlord/properties/new" class="quick-action-card quick-action-primary">
+                <span class="quick-action-icon">+</span>
+                <div>
+                    <div class="quick-action-title">Add New Property</div>
+                    <div class="quick-action-sub">List a new property</div>
+                </div>
+            </a>
+            <a href="/landlord/properties" class="quick-action-card">
+                <span class="quick-action-icon">H</span>
+                <div>
+                    <div class="quick-action-title">View My Properties</div>
+                    <div class="quick-action-sub">Manage your properties</div>
+                </div>
+            </a>
+            <a href="/landlord/payments" class="quick-action-card">
+                <span class="quick-action-icon">$</span>
+                <div>
+                    <div class="quick-action-title">View My Payments</div>
+                    <div class="quick-action-sub">Track your payments</div>
+                </div>
+            </a>
         </div>
 
-        <div class="page-header"><h2 style="font-size:1.1rem;">Recent Properties</h2></div>
+        <div class="page-header">
+            <h2 style="font-size:1.1rem;">Recent Properties</h2>
+            <a href="/landlord/properties" class="btn btn-sm btn-secondary">View all properties</a>
+        </div>
         <div th:if="${recentProperties.isEmpty()}" class="empty-state"><p>No properties yet.</p></div>
-        <table class="data-table" th:unless="${recentProperties.isEmpty()}">
-            <thead><tr><th>Title</th><th>City</th><th>Rent</th><th>Status</th></tr></thead>
-            <tbody>
-            <tr th:each="p : ${recentProperties}">
-                <td th:text="${p.title}"></td>
-                <td th:text="${p.city}"></td>
-                <td th:text="${p.rentAmount}"></td>
-                <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive" th:unless="${recentProperties.isEmpty()}">
+            <table class="data-table">
+                <thead><tr><th>Title</th><th>Location</th><th>Rent</th><th>Status</th><th>Added On</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${recentProperties}">
+                    <td>
+                        <div class="prop-row-title">
+                            <div class="prop-row-thumb"></div>
+                            <div>
+                                <div th:text="${p.title}"></div>
+                                <div class="prop-row-desc" th:text="${p.description}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${p.city}"></td>
+                    <td th:text="'$' + ${p.rentAmount} + ' / month'"></td>
+                    <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(p.status)}" th:text="${p.status}"></span></td>
+                    <td th:text="${#temporals.format(p.createdAt, 'MMM dd, yyyy')}"></td>
+                    <td><a th:href="@{/landlord/properties/{id}(id=${p.id})}" class="btn btn-sm btn-secondary">View</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="feature-strip">
+            <div class="feature-strip-item">
+                <span class="feature-strip-icon">S</span>
+                <div>
+                    <div class="feature-strip-title">Secure &amp; Safe</div>
+                    <div class="feature-strip-desc">Your data is protected with top-notch security.</div>
+                </div>
+            </div>
+            <div class="feature-strip-item">
+                <span class="feature-strip-icon">T</span>
+                <div>
+                    <div class="feature-strip-title">Track &amp; Manage</div>
+                    <div class="feature-strip-desc">Easily track your properties and payments.</div>
+                </div>
+            </div>
+            <div class="feature-strip-item">
+                <span class="feature-strip-icon">R</span>
+                <div>
+                    <div class="feature-strip-title">Real-time Updates</div>
+                    <div class="feature-strip-desc">Get notified about property and payment activity.</div>
+                </div>
+            </div>
+            <div class="feature-strip-item">
+                <span class="feature-strip-icon">C</span>
+                <div>
+                    <div class="feature-strip-title">24/7 Support</div>
+                    <div class="feature-strip-desc">We're here to help you anytime, anywhere.</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    function closeSidebar() { document.querySelector('.admin-sidebar').classList.remove('open'); }
+    function toggleNotif() { document.getElementById('notifDropdown').classList.toggle('open'); }
+    function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('open'); }
+    document.addEventListener('click', function(e) {
+        const notif = document.getElementById('notifDropdown');
+        const notifBtn = document.getElementById('notifTrigger');
+        if (notif && !notif.contains(e.target) && notifBtn && !notifBtn.contains(e.target)) notif.classList.remove('open');
+        const user = document.getElementById('userDropdown');
+        const userBtn = document.getElementById('userMenuTrigger');
+        if (user && !user.contains(e.target) && userBtn && !userBtn.contains(e.target)) user.classList.remove('open');
+    });
+</script>
 </body>
 </html>
