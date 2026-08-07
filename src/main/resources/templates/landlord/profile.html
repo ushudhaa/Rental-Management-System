@@ -2,8 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head('Profile')}"></head>
 <body class="admin-shell">
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 <aside class="admin-sidebar">
-  <div class="sidebar-brand">RMS</div>
+  <div class="sidebar-brand-v2">
+    <span class="sidebar-brand-icon">&#8962;</span>
+    <div>
+      <div class="sidebar-brand-title">RMS</div>
+      <div class="sidebar-brand-sub">Rental Management System</div>
+    </div>
+  </div>
   <div class="sidebar-section">MAIN MENU</div>
   <a href="/landlord/dashboard" class="sidebar-link"><span class="sidebar-icon">D</span> Dashboard</a>
   <a href="/landlord/properties" class="sidebar-link"><span class="sidebar-icon">H</span> My Properties</a>
@@ -13,65 +20,95 @@
   <form th:action="@{/logout}" method="post">
     <button type="submit" class="sidebar-link sidebar-logout"><span class="sidebar-icon">L</span> Logout</button>
   </form>
+  <div class="sidebar-help">
+    <div class="sidebar-help-title">Need Help?</div>
+    <div class="sidebar-help-sub">We're here to help you</div>
+    <a href="#" class="sidebar-help-link">Contact Support &rarr;</a>
+  </div>
 </aside>
 
 <div class="admin-main">
-  <header class="admin-topbar"><h1>Profile</h1></header>
+  <div th:replace="~{layout :: adminTopbar('Profile', 'Dashboard &gt; Account &gt; Profile', landlord)}"></div>
+
   <div class="admin-content">
-    <div class="profile-wrap">
-      <p class="page-subtitle">Manage your account information and security settings.</p>
+    <p class="dashboard-welcome">Manage your account information and security settings.</p>
 
-      <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
-      <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
-      <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
+    <div th:if="${param.updated}" class="alert alert-success">Profile updated successfully.</div>
+    <div th:if="${param.pwChanged}" class="alert alert-success">Password changed successfully.</div>
+    <div th:if="${editError}" class="alert alert-error" th:text="${editError}"></div>
+    <div id="photoAlert"></div>
 
-      <div class="profile-overview">
-        <div class="profile-avatar" th:text="${initials}"></div>
-        <div class="profile-overview-info">
-          <div class="profile-name" th:text="${landlord.fullName}"></div>
-          <div class="profile-subtitle">Landlord</div>
-          <div class="profile-badges">
-            <span class="badge badge-landlord" th:text="${landlord.role}"></span>
-            <span class="badge badge-paid">ACTIVE</span>
-          </div>
+    <div class="profile-overview-v2">
+      <div class="photo-block">
+        <div class="photo-circle" id="photoCircle">
+          <img th:if="${landlord.profileImageUrl != null}" th:src="${landlord.profileImageUrl}" id="photoImg" alt="Profile photo">
+          <span th:unless="${landlord.profileImageUrl != null}" id="photoInitials" th:text="${initials}"></span>
         </div>
-        <div class="profile-overview-action">
-          <button type="button" class="btn btn-primary" onclick="document.getElementById('editModal').classList.add('open')">Edit Profile</button>
+        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="onPhotoSelected(event)">
+        <button type="button" class="photo-camera-btn" onclick="document.getElementById('photoInput').click()" title="Change photo">&#128247;</button>
+      </div>
+      <div class="profile-overview-info">
+        <div class="profile-name" th:text="${landlord.fullName}"></div>
+        <div class="profile-subtitle" th:text="${landlord.role}"></div>
+        <div class="profile-contact-line">
+          <span th:text="${landlord.email}"></span>
         </div>
       </div>
+      <div class="profile-overview-meta">
+        <span class="badge badge-paid">ACTIVE</span>
+        <div class="profile-meta-line">Member since <span th:text="${#temporals.format(landlord.createdAt, 'MMM dd, yyyy')}"></span></div>
+      </div>
+      <div class="profile-overview-action">
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('editModal').classList.add('open')">Edit Profile</button>
+      </div>
+    </div>
 
+    <div class="stat-grid-v2" style="margin-top:20px;">
+      <div class="stat-card-v2">
+        <div class="stat-icon-v2 stat-icon-green">H</div>
+        <div class="stat-value" th:text="${totalProperties}"></div>
+        <div class="stat-title">Total Properties</div>
+        <div class="stat-desc">Properties you own</div>
+      </div>
+      <div class="stat-card-v2">
+        <div class="stat-icon-v2 stat-icon-green">A</div>
+        <div class="stat-value" th:text="${availableProperties}"></div>
+        <div class="stat-title">Available Properties</div>
+        <div class="stat-desc">Ready for rent</div>
+      </div>
+      <div class="stat-card-v2">
+        <div class="stat-icon-v2 stat-icon-green">O</div>
+        <div class="stat-value" th:text="${occupiedProperties}"></div>
+        <div class="stat-title">Occupied Properties</div>
+        <div class="stat-desc">Currently rented</div>
+      </div>
+      <div class="stat-card-v2">
+        <div class="stat-icon-v2 stat-icon-green">$</div>
+        <div class="stat-value" th:text="${totalPayments}"></div>
+        <div class="stat-title">Total Payments</div>
+        <div class="stat-desc">All time payments</div>
+      </div>
+    </div>
+
+    <div class="profile-info-grid">
       <div class="profile-card">
         <h2>Account Information</h2>
-        <div class="info-grid">
-          <div>
-            <div class="info-label">Full Name</div>
-            <div class="info-value" th:text="${landlord.fullName}"></div>
-          </div>
-          <div>
-            <div class="info-label">Role</div>
-            <div class="info-value" th:text="${landlord.role}"></div>
-          </div>
-          <div>
-            <div class="info-label">Email Address</div>
-            <div class="info-value" th:text="${landlord.email}"></div>
-          </div>
-          <div>
-            <div class="info-label">Account Created</div>
-            <div class="info-value" th:text="${#temporals.format(landlord.createdAt, 'MMM dd, yyyy')}"></div>
-          </div>
+        <div class="info-list">
+          <div class="info-list-row"><span class="info-list-label">Full Name</span><span th:text="${landlord.fullName}"></span></div>
+          <div class="info-list-row"><span class="info-list-label">Email Address</span><span th:text="${landlord.email}"></span></div>
+          <div class="info-list-row"><span class="info-list-label">Role</span><span th:text="${landlord.role}"></span></div>
+          <div class="info-list-row"><span class="info-list-label">Account Created</span><span th:text="${#temporals.format(landlord.createdAt, 'MMM dd, yyyy')}"></span></div>
+          <div class="info-list-row"><span class="info-list-label">Status</span><span class="badge badge-paid">Active</span></div>
         </div>
       </div>
 
       <div class="profile-card">
         <h2>Security</h2>
-        <div class="info-grid">
-          <div>
-            <div class="info-label">Password</div>
-            <div class="info-value">********</div>
+        <div class="info-list">
+          <div class="info-list-row">
+            <span class="info-list-label">Password</span>
+            <a href="/landlord/profile/change-password" class="btn btn-sm btn-secondary">Change Password</a>
           </div>
-        </div>
-        <div class="form-actions">
-          <a href="/landlord/profile/change-password" class="btn btn-secondary">Change Password</a>
         </div>
       </div>
     </div>
@@ -93,5 +130,44 @@
     </form>
   </div>
 </div>
+
+<script>
+  function closeSidebar() { document.querySelector('.admin-sidebar').classList.remove('open'); }
+  function toggleNotif() { document.getElementById('notifDropdown').classList.toggle('open'); }
+  function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('open'); }
+  document.addEventListener('click', function(e) {
+    const notif = document.getElementById('notifDropdown');
+    const notifBtn = document.getElementById('notifTrigger');
+    if (notif && !notif.contains(e.target) && notifBtn && !notifBtn.contains(e.target)) notif.classList.remove('open');
+    const user = document.getElementById('userDropdown');
+    const userBtn = document.getElementById('userMenuTrigger');
+    if (user && !user.contains(e.target) && userBtn && !userBtn.contains(e.target)) user.classList.remove('open');
+  });
+
+  function showPhotoAlert(msg, type) {
+    document.getElementById('photoAlert').innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+  }
+  function onPhotoSelected(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) { showPhotoAlert('Please select a JPEG, PNG, or WEBP image.', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { showPhotoAlert('Image must be smaller than 5 MB.', 'error'); return; }
+
+    const reader = new FileReader();
+    reader.onload = e => renderPhoto(e.target.result);
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch('/api/profile/photo', { method: 'POST', body: formData })
+            .then(res => { if (!res.ok) return res.json().then(err => { throw err; }); return res.json(); })
+            .then(data => { renderPhoto(data.profileImageUrl); showPhotoAlert('Profile photo updated successfully.', 'success'); })
+            .catch(err => showPhotoAlert(err.message || 'Unable to upload photo.', 'error'));
+  }
+  function renderPhoto(src) {
+    document.getElementById('photoCircle').innerHTML = '<img src="' + src + '" alt="Profile photo">';
+  }
+</script>
 </body>
 </html>

@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Page<Payment> findByPropertyId(Long propertyId, Pageable pageable);
     Page<Payment> findByStatus(PaymentStatus status, Pageable pageable);
+    long countByPropertyOwnerEmail(String email);
 }

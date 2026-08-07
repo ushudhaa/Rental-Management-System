@@ -39,7 +39,7 @@ public class LandlordViewController {
         long occupied = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
                 .stream().filter(p -> p.getStatus() == PropertyStatus.RENTED).count();
 
-        model.addAttribute("appUser", landlord);
+        model.addAttribute("landlord", landlord);
         model.addAttribute("initials", getInitials(landlord.getFullName()));
         model.addAttribute("totalProperties", total);
         model.addAttribute("availableProperties", available);
@@ -63,7 +63,7 @@ public class LandlordViewController {
         long occupied = propertyRepository.findByOwnerEmail(email, PageRequest.of(0, 1000)).getContent()
                 .stream().filter(p -> p.getStatus() == PropertyStatus.RENTED).count();
 
-        model.addAttribute("appUser", landlord);
+        model.addAttribute("landlord", landlord);
         model.addAttribute("initials", getInitials(landlord.getFullName()));
         model.addAttribute("totalProperties", total);
         model.addAttribute("availableProperties", available);
