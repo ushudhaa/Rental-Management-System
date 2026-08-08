@@ -28,8 +28,9 @@
 </aside>
 
 <div class="admin-main">
-  <div th:replace="~{layout :: adminTopbar('Profile', 'Dashboard &gt; Account &gt; Profile', landlord)}"></div>
-
+  <div class="breadcrumb-standalone">Dashboard &gt; Account &gt; Profile</div>
+  <div th:replace="~{layout :: adminTopbar('Profile', landlord)}"></div>
+  <div th:replace="~{layout :: adminTopbar('Profile', landlord)}"></div>
   <div class="admin-content">
     <p class="dashboard-welcome">Manage your account information and security settings.</p>
 

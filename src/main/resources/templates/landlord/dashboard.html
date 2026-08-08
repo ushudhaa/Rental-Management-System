@@ -28,10 +28,8 @@
 </aside>
 
 <div class="admin-main">
-    <div th:replace="~{layout :: adminTopbar('Dashboard', null)}"></div>
-
-    <div class="admin-content">
-        <p class="dashboard-welcome">Welcome back, <strong th:text="${appUser != null ? appUser.fullName : ''}"></strong>. Here is an overview of your rental properties.</p>
+    <div th:replace="~{layout :: adminTopbar('Dashboard', landlord)}"></div>    <div class="admin-content">
+        <p class="dashboard-welcome">Welcome back, <strong th:text="${landlord.fullName}"></strong>. Here is an overview of your rental properties.</p>
 
         <div class="stat-grid-v2">
             <div class="stat-card-v2">

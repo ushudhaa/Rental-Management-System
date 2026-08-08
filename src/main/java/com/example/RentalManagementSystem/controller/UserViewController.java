@@ -32,11 +32,19 @@ public class UserViewController {
     public String dashboard(Model model) {
         List<Property> available = propertyRepository.findByStatus(PropertyStatus.AVAILABLE, PageRequest.of(0, 1000)).getContent();
 
+        long newThisWeek = available.stream()
+                .filter(p -> p.getCreatedAt() != null && p.getCreatedAt().isAfter(java.time.LocalDateTime.now().minusDays(7)))
+                .count();
+        long cityCount = available.stream().map(Property::getCity).filter(c -> c != null && !c.isBlank())
+                .map(String::toLowerCase).distinct().count();
+
         model.addAttribute("availableCount", available.size());
+        model.addAttribute("cityCount", cityCount);
+        model.addAttribute("newThisWeek", newThisWeek);
         model.addAttribute("recentProperties",
                 available.stream()
                         .sorted(Comparator.comparing(Property::getCreatedAt).reversed())
-                        .limit(3)
+                        .limit(6)
                         .collect(Collectors.toList()));
 
         return "user/dashboard";
@@ -50,6 +58,7 @@ public class UserViewController {
             @RequestParam(required = false) BigDecimal maxRent,
             @RequestParam(required = false) Integer bedrooms,
             @RequestParam(defaultValue = "newest") String sort,
+            @RequestParam(defaultValue = "0") int page,
             Model model) {
 
         List<Property> available = propertyRepository.findByStatus(PropertyStatus.AVAILABLE, PageRequest.of(0, 1000)).getContent();
@@ -71,13 +80,24 @@ public class UserViewController {
             default -> filtered.sort(Comparator.comparing(Property::getCreatedAt).reversed());
         }
 
+        int pageSize = 9;
+        int totalResults = filtered.size();
+        int totalPages = Math.max(1, (int) Math.ceil(totalResults / (double) pageSize));
+        int safePage = Math.min(Math.max(page, 0), totalPages - 1);
+        int fromIndex = Math.min(safePage * pageSize, totalResults);
+        int toIndex = Math.min(fromIndex + pageSize, totalResults);
+        List<Property> pageContent = filtered.subList(fromIndex, toIndex);
+
         List<String> cities = available.stream()
                 .map(Property::getCity)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
 
-        model.addAttribute("properties", filtered);
+        model.addAttribute("properties", pageContent);
+        model.addAttribute("totalResults", totalResults);
+        model.addAttribute("currentPage", safePage);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("cities", cities);
         model.addAttribute("search", search);
         model.addAttribute("city", city);

@@ -18,6 +18,11 @@
         </form>
     </div>
 </nav>
+
+<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
+    <span class="arrow">&larr;</span> Back
+</button>
+
 <div th:fragment="adminTopbar(pageTitle, breadcrumb)" class="topbar-v2">
     <div class="topbar-left">
         <button type="button" class="sidebar-toggle-v2" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">&#9776;</button>
@@ -27,16 +32,7 @@
         </div>
     </div>
     <div class="topbar-right-v2">
-        <div class="notif-wrapper">
-            <button type="button" class="notif-bell-v2" id="notifTrigger" onclick="toggleNotif()">
-                &#128276;
-                <span class="notif-badge" id="notifCount">2</span>
-            </button>
-            <div id="notifDropdown" class="notif-dropdown">
-                <div class="notif-header">Notifications</div>
-                <div class="notif-item notif-empty">No new notifications</div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/notifications :: bell}"></div>
         <div class="topbar-user-v2" id="userMenuTrigger" onclick="toggleUserMenu()">
             <div class="topbar-avatar-v2" th:text="${initials}"></div>
             <div class="topbar-user-text">
@@ -46,8 +42,8 @@
             <span class="topbar-caret">&#9662;</span>
         </div>
         <div class="topbar-dropdown" id="userDropdown">
-            <a href="/landlord/profile">Profile</a>
-            <a href="/landlord/profile/change-password">Change Password</a>
+            <a th:href="@{${appUser != null && appUser.role.name() == 'ADMIN'} ? '/admin/profile' : (${appUser != null && appUser.role.name() == 'LANDLORD'} ? '/landlord/profile' : '/user/profile')}">Profile</a>
+            <a th:href="@{${appUser != null && appUser.role.name() == 'ADMIN'} ? '/admin/profile/change-password' : (${appUser != null && appUser.role.name() == 'LANDLORD'} ? '/landlord/profile/change-password' : '/user/profile/change-password')}">Change Password</a>
             <hr>
             <form th:action="@{/logout}" method="post">
                 <button type="submit">Logout</button>
@@ -55,9 +51,6 @@
         </div>
     </div>
 </div>
-<button th:fragment="backButton" type="button" class="btn-back" onclick="history.back()">
-    <span class="arrow">&larr;</span> Back
-</button>
 
 <footer th:fragment="footer" class="site-footer">
     Rental Management System &middot; Built with Spring Boot
